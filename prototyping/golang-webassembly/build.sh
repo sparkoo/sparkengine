@@ -10,4 +10,4 @@ cp wasm_exec.js out/
 
 GOOS=js GOARCH=wasm go build -o out/main.wasm
 
-go run server/server.go
+go run ../webserver/server.go
