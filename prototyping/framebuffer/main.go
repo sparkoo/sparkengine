@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"math/rand"
 	"syscall/js"
 	"time"
 )
@@ -32,27 +31,23 @@ func main() {
 	canvas.Set("width", WIDTH)
 	canvas.Set("height", HEIGHT)
 
-	fmt.Println("before")
-	go randNoise()
-	fmt.Println("after")
-
-	loop()
+	loop(randNoise)
 	fmt.Println("bye")
 }
 
 func randNoise() {
-	fmt.Println("generating random noise")
-	time.Sleep(250 * time.Millisecond)
+	log.Println("generating random noise")
 	for i := 0; i < BUFFERSIZE; i += 4 {
-		imageData.Get("data").SetIndex(i, rand.Int()%255)
-		imageData.Get("data").SetIndex(i+1, rand.Int()%255)
-		imageData.Get("data").SetIndex(i+2, rand.Int()%255)
-		imageData.Get("data").SetIndex(i+3, rand.Int()%255)
+		c := i % 255
+		imageData.Get("data").SetIndex(i, c)
+		imageData.Get("data").SetIndex(i+1, c)
+		imageData.Get("data").SetIndex(i+2, c)
+		imageData.Get("data").SetIndex(i+3, 255)
 	}
-	go randNoise()
+	log.Println("done")
 }
 
-func loop() {
+func loop(foo func()) {
 	done := make(chan struct{}, 0)
 
 	fmt.Println("hsi")
@@ -69,6 +64,7 @@ func loop() {
 		start = t
 
 		log.Println("start")
+		foo()
 		ctx.Call("putImageData", imageData, 0, 0)
 		log.Println("end")
 		js.Global().Call("requestAnimationFrame", renderFrame)
