@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #mycanvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+<canvas id="mycanvas" width="320" height="200"></canvas>
+<script type="text/javascript">
+    (function() {
+        const canvas = document.getElementById("mycanvas");
+        canvas.width = 320
+        canvas.height = 200
+        const ctx = canvas.getContext("2d");
+
+        var conn = new WebSocket("ws://localhost:8080/ws");
+        conn.onclose = function(evt) {
+            data.textContent = 'Connection closed';
+        }
+        conn.onmessage = function(evt) {
+            let t1 = performance.now()
+            fps = (1 / (t1 - t)) * 1000
+            console.log("fps: ", fps)
+            let imageData = ctx.getImageData(0, 0, 320, 200);
+            for (let i = 0; i < evt.data.length; i++) {
+                imageData.data[i] = evt.data.charCodeAt(i)
+            }
+            ctx.putImageData(imageData, 0, 0)
+            t = t1
+        }
+        conn.onopen = function(evt) {
+            console.log("OPEN");
+            conn.send("hello")
+        }
+
+        let t = performance.now()
+    })();
+</script>
+</body>
+</html>
