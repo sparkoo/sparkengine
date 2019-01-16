@@ -26,11 +26,31 @@
             let t1 = performance.now()
             fps = (1 / (t1 - t)) * 1000
             console.log("fps: ", fps)
-            let imageData = ctx.getImageData(0, 0, 320, 200);
-            for (let i = 0; i < evt.data.length; i++) {
-                imageData.data[i] = evt.data.charCodeAt(i)
-            }
-            ctx.putImageData(imageData, 0, 0)
+            let r = new FileReader();
+            r.addEventListener("loadend", function () {
+                // console.log(new Uint8ClampedArray(r.result))
+                let imagedata = ctx.createImageData(320,200)
+                let data = new Uint8ClampedArray(r.result)
+                // console.log(data)
+                imagedata.data.set(data)
+                // console.log(imagedata.data)
+                ctx.putImageData(imagedata, 0, 0)
+            })
+
+            r.readAsArrayBuffer(evt.data)
+
+            // console.log(evt.data.slice(0,100))
+            // createImageBitmap(evt.data).then(function(img) {
+            //     console.log(img)
+            //     ctx.drawImage(img, 0, 0)
+            // }).catch(function(e) {
+            //     console.log(e.toLocaleString())
+            // })
+            // let imageData = ctx.getImageData(0, 0, 320, 200);
+            // for (let i = 0; i < evt.data.length; i++) {
+            //     imageData.data[i] = evt.data.charCodeAt(i)
+            // }
+            // ctx.putImageData(imageData, 0, 0)
             t = t1
         }
         conn.onopen = function(evt) {

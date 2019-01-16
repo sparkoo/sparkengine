@@ -35,7 +35,13 @@ func echo(w http.ResponseWriter, r *http.Request) {
 		}
 		log.Printf("recv: %s, %v", message, mt)
 		c.EnableWriteCompression(true)
-		for {
+
+		t1 := time.Now()
+		for i := 0; i < 320 * 10 * 4; i++ {
+			t2 := time.Now()
+			diff := t2.Sub(t1).Nanoseconds() / 1000
+			t1 = t2
+			log.Println(i, "time: ", diff, "ms")
 			rrr(c, mt)
 		}
 	}
@@ -47,14 +53,14 @@ var lll = 0
 func rrr(conn *websocket.Conn, mt int) {
 	size := 320 * 200 * 4
 	response := make([]byte, size)
-	for i := 0; i < lll * 4; i+=4 {
+	for i := 0; i < lll*4; i += 4 {
 		response[i] = 127
-		response[i + 1] = 127
-		response[i + 2] = 127
-		response[i + 3] = 127
+		response[i+1] = 127
+		response[i+2] = 127
+		response[i+3] = 127
 	}
 	lll += 4
-	err := conn.WriteMessage(mt, response)
+	err := conn.WriteMessage(websocket.BinaryMessage, response)
 	if err != nil {
 		log.Println("write:", err)
 	}
