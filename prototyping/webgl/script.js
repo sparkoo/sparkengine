@@ -31,28 +31,36 @@
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 
+    let f = document.getElementById("f")
+
     var conn = new WebSocket("ws://localhost:8080/ws");
+    conn.binaryType = 'arraybuffer'
     conn.onclose = function(evt) {
         // data.textContent = 'Connection closed';
         console.log(evt);
     }
     conn.onmessage = function(evt) {
+        // console.log(evt)
         let t1 = performance.now()
         let fps = (1 / (t1 - t)) * 1000
-        console.log("fps: ", fps)
+        f.innerText = fps
         t = t1
 
-        let t11 = performance.now()
-        let reader = new FileReader()
-        reader.onloadend = function() {
-            console.log("creating uint8array");
-            console.log(performance.now() - t11);
-            let data = new Uint8Array(reader.result)
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, canvas.width, canvas.height, 0,
-                gl.RGBA, gl.UNSIGNED_BYTE, data);
-            gl.drawArrays(gl.TRIANGLES, 0, 6);
-        }
-        reader.readAsArrayBuffer(evt.data)
+        // console.log(evt)
+
+        // let t11 = performance.now()
+        let data = new Uint8Array(evt.data)
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, canvas.width, canvas.height, 0,
+            gl.RGBA, gl.UNSIGNED_BYTE, data);
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+        // console.log("draw");
+        // console.log(performance.now() - t11);
+
+        // let reader = new FileReader()
+        // reader.onloadend = function() {
+        //
+        // }
+        // reader.readAsArrayBuffer(evt.data)
 
 
         // let r = new FileReader();

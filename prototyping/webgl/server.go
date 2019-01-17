@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"github.com/gorilla/websocket"
+	"io"
 	"log"
 	"net/http"
 	"time"
@@ -42,7 +43,10 @@ func echo(w http.ResponseWriter, r *http.Request) {
 			diff := t2.Sub(t1).Nanoseconds() / 1000 / 1000
 			t1 = t2
 			log.Println(i, "time: ", diff, "ms")
-			rrr(c, mt)
+			w, _ := c.NextWriter(websocket.BinaryMessage)
+			rrr(w, mt)
+			w.Close()
+			time.Sleep(1 * time.Millisecond)
 		}
 	}
 
@@ -50,7 +54,7 @@ func echo(w http.ResponseWriter, r *http.Request) {
 
 var lll = 0
 
-func rrr(conn *websocket.Conn, mt int) {
+func rrr(w io.WriteCloser, mt int) {
 	size := 320 * 200 * 4
 	response := make([]byte, size)
 	for i := 0; i < lll*4; i += 4 {
@@ -60,11 +64,14 @@ func rrr(conn *websocket.Conn, mt int) {
 		response[i+3] = 255
 	}
 	lll += 4
-	err := conn.WriteMessage(websocket.BinaryMessage, response)
-	if err != nil {
-		log.Println("write:", err)
+	//err := conn.WriteMessage(websocket.BinaryMessage, response)
+	//if err != nil {
+	//	log.Println("write:", err)
+	//}
+	if _, err := w.Write(response); err != nil {
+		log.Fatal(err)
 	}
-	//time.Sleep(1 * time.Millisecond)
+
 }
 
 func main() {
