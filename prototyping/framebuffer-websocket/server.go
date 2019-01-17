@@ -16,7 +16,7 @@ var (
 	addr     = flag.String("addr", ":8080", "http service address")
 	upgrader = websocket.Upgrader{
 		ReadBufferSize:  1024,
-		WriteBufferSize: 1024,
+		WriteBufferSize: 320 * 200 * 4,
 	}
 )
 
@@ -34,15 +34,18 @@ func echo(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 		log.Printf("recv: %s, %v", message, mt)
-		c.EnableWriteCompression(true)
+		//c.EnableWriteCompression(true)
 
+		size := 320 * 200 * 4
+		response := make([]byte, size)
 		t1 := time.Now()
 		for i := 0; i < 320 * 10 * 4; i++ {
 			t2 := time.Now()
 			diff := t2.Sub(t1).Nanoseconds() / 1000
 			t1 = t2
 			log.Println(i, "time: ", diff, "ms")
-			rrr(c, mt)
+			rrr(c, response)
+			time.Sleep(10 * time.Millisecond)
 		}
 	}
 
@@ -50,9 +53,7 @@ func echo(w http.ResponseWriter, r *http.Request) {
 
 var lll = 0
 
-func rrr(conn *websocket.Conn, mt int) {
-	size := 320 * 200 * 4
-	response := make([]byte, size)
+func rrr(conn *websocket.Conn, response []byte) {
 	for i := 0; i < lll*4; i += 4 {
 		response[i] = 127
 		response[i+1] = 127

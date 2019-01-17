@@ -17,7 +17,8 @@ var (
 	addr     = flag.String("addr", ":8080", "http service address")
 	upgrader = websocket.Upgrader{
 		ReadBufferSize:  1024,
-		WriteBufferSize: 1024,
+		WriteBufferSize: 320 * 200 * 4 * 2,
+		EnableCompression: false,
 	}
 )
 
@@ -35,18 +36,20 @@ func echo(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 		log.Printf("recv: %s, %v", message, mt)
-		c.EnableWriteCompression(true)
+		//c.EnableWriteCompression(true)
 
+		size := 320 * 200 * 4
+		response := make([]byte, size)
 		t1 := time.Now()
 		for i := 0; i < 320 * 10 * 4; i++ {
 			t2 := time.Now()
-			diff := t2.Sub(t1).Nanoseconds() / 1000 / 1000
+			diff := t2.Sub(t1).Nanoseconds() / 1000
 			t1 = t2
-			log.Println(i, "time: ", diff, "ms")
+			log.Println(i, "time: ", diff, "ns")
 			w, _ := c.NextWriter(websocket.BinaryMessage)
-			rrr(w, mt)
+			rrr(&response, &w)
 			w.Close()
-			time.Sleep(1 * time.Millisecond)
+			time.Sleep(5 * time.Millisecond)
 		}
 	}
 
@@ -54,24 +57,18 @@ func echo(w http.ResponseWriter, r *http.Request) {
 
 var lll = 0
 
-func rrr(w io.WriteCloser, mt int) {
-	size := 320 * 200 * 4
-	response := make([]byte, size)
+func rrr(response *[]byte, w *io.WriteCloser) {
 	for i := 0; i < lll*4; i += 4 {
-		response[i] = 127
-		response[i+1] = 127
-		response[i+2] = 127
-		response[i+3] = 255
+		(*response)[i] = 127
+		(*response)[i+1] = 127
+		(*response)[i+2] = 127
+		(*response)[i+3] = 127
 	}
 	lll += 4
-	//err := conn.WriteMessage(websocket.BinaryMessage, response)
-	//if err != nil {
-	//	log.Println("write:", err)
-	//}
-	if _, err := w.Write(response); err != nil {
-		log.Fatal(err)
+	_, err := (*w).Write(*response)
+	if err != nil {
+		log.Println("write:", err)
 	}
-
 }
 
 func main() {
