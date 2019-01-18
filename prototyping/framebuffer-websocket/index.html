@@ -10,24 +10,29 @@
     </style>
 </head>
 <body>
+fps: <span id="f"></span>
+<br />
 <canvas id="mycanvas" width="320" height="200"></canvas>
 <script type="text/javascript">
     (function() {
         const canvas = document.getElementById("mycanvas");
-        canvas.width = 320
-        canvas.height = 200
+        canvas.width = 640
+        canvas.height = 480
         const ctx = canvas.getContext("2d");
+
+        const f = document.getElementById("f")
 
         var conn = new WebSocket("ws://localhost:8080/ws");
         conn.binaryType = 'arraybuffer'
         conn.onclose = function(evt) {
             data.textContent = 'Connection closed';
         }
-        let imagedata = ctx.createImageData(320,200)
+        let imagedata = ctx.createImageData(640,480)
         conn.onmessage = function(evt) {
             let t1 = performance.now()
             fps = (1 / (t1 - t)) * 1000
-            console.log("fps: ", fps)
+            // console.log("fps: ", fps)
+            f.innerHTML = fps
 
             let data = new Uint8Array(evt.data)
             imagedata.data.set(data)

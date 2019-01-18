@@ -39,13 +39,13 @@ func echo(w http.ResponseWriter, r *http.Request) {
 		size := 320 * 200 * 4
 		response := make([]byte, size)
 		t1 := time.Now()
-		for i := 0; i < 320 * 10 * 4; i++ {
+		for i := 0; i < 640 * 480 * 4 * 1; i++ {
 			t2 := time.Now()
 			diff := t2.Sub(t1).Nanoseconds() / 1000
 			t1 = t2
-			log.Println(i, "time: ", diff, "ms")
+			log.Println(i, "time: ", diff, "ns")
 			rrr(c, response)
-			time.Sleep(10 * time.Millisecond)
+			time.Sleep(16 * time.Millisecond)
 		}
 	}
 
