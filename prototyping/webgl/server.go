@@ -3,22 +3,23 @@ package main
 import (
 	"flag"
 	"github.com/gorilla/websocket"
-	"io"
 	"log"
 	"net/http"
 	"time"
 )
 
 const (
-	timeout = 1 * time.Second
+	timeout        = 1 * time.Second
+	FRAME_WIDTH    = 640
+	FRAME_HEIGHT   = 480
+	FRAME_BYTESIZE = FRAME_WIDTH * FRAME_HEIGHT * 4
 )
 
 var (
 	addr     = flag.String("addr", ":8080", "http service address")
 	upgrader = websocket.Upgrader{
 		ReadBufferSize:  1024,
-		WriteBufferSize: 320 * 200 * 4 * 2,
-		EnableCompression: false,
+		WriteBufferSize: FRAME_BYTESIZE,
 	}
 )
 
@@ -38,18 +39,15 @@ func echo(w http.ResponseWriter, r *http.Request) {
 		log.Printf("recv: %s, %v", message, mt)
 		//c.EnableWriteCompression(true)
 
-		size := 320 * 200 * 4
-		response := make([]byte, size)
+		response := make([]byte, FRAME_BYTESIZE)
 		t1 := time.Now()
-		for i := 0; i < 320 * 10 * 4; i++ {
+		for i := 0; i < FRAME_BYTESIZE; i++ {
 			t2 := time.Now()
 			diff := t2.Sub(t1).Nanoseconds() / 1000
 			t1 = t2
 			log.Println(i, "time: ", diff, "ns")
-			w, _ := c.NextWriter(websocket.BinaryMessage)
-			rrr(&response, &w)
-			w.Close()
-			time.Sleep(5 * time.Millisecond)
+			rrr(c, response)
+			time.Sleep(1 * time.Millisecond)
 		}
 	}
 
@@ -57,18 +55,30 @@ func echo(w http.ResponseWriter, r *http.Request) {
 
 var lll = 0
 
-func rrr(response *[]byte, w *io.WriteCloser) {
+func rrr(conn *websocket.Conn, response []byte) {
 	for i := 0; i < lll*4; i += 4 {
-		(*response)[i] = 127
-		(*response)[i+1] = 127
-		(*response)[i+2] = 127
-		(*response)[i+3] = 127
+		response[i] = 127
+		response[i+1] = 127
+		response[i+2] = 127
+		response[i+3] = 127
 	}
 	lll += 4
-	_, err := (*w).Write(*response)
+	err := conn.WriteMessage(websocket.BinaryMessage, response)
 	if err != nil {
 		log.Println("write:", err)
 	}
+}
+
+func serveHome(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/" {
+		http.Error(w, "Not found", http.StatusNotFound)
+		return
+	}
+	if r.Method != "GET" {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	http.ServeFile(w, r, "index.html")
 }
 
 func main() {
@@ -77,11 +87,11 @@ func main() {
 	flag.Parse()
 
 	http.HandleFunc("/ws", echo)
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "index.html")
+	http.HandleFunc("/webgl", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "webgl.html")
 	})
-	http.HandleFunc("/pixi.min.js", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "pixi.min.js")
+	http.HandleFunc("/2d", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "2d.html")
 	})
 	http.HandleFunc("/script.js", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "script.js")
