@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"github.com/gorilla/websocket"
 	"log"
 	"math/rand"
@@ -20,6 +21,10 @@ var (
 	upgrader = websocket.Upgrader{
 		ReadBufferSize:  1024,
 		WriteBufferSize: FRAME_BYTESIZE,
+		CheckOrigin: func(r *http.Request) bool {
+			fmt.Println(r)
+			return true
+		},
 	}
 )
 
