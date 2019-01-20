@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body { margin: 0; }
+        #myCanvas { width: 640px; height: 480px; border: 1px solid black }
+    </style>
+</head>
+<body>
+    <!--<script src="pixi.min.js"></script>-->
+    <div id="info">
+        <div>fps : <span id="f"></span></div>
+    </div>
+    <canvas id="myCanvas"></canvas>
+    <script src="https://twgljs.org/dist/3.x/twgl.min.js"></script>
+    <script id="vshader" type="whatever">
+        attribute vec4 a_position;
+        varying vec2 v_texcoord;
+
+        void main() {
+          gl_Position = a_position;
+          v_texcoord = a_position.xy * 0.5 + 0.5;
+        }
+    </script>
+        <script id="fshader" type="whatever">
+    precision mediump float;
+    varying vec2 v_texcoord;
+    uniform sampler2D u_sampler;
+    void main() {
+        gl_FragColor = texture2D(u_sampler, v_texcoord);
+    }
+    </script>
+    <script type="module" src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #mycanvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+fps: <span id="f"></span>
+<br />
+<canvas id="mycanvas" width="320" height="200"></canvas>
+<script type="text/javascript">
+    (function() {
+        const canvas = document.getElementById("mycanvas");
+        canvas.width = 640
+        canvas.height = 480
+        const ctx = canvas.getContext("2d");
+
+        const f = document.getElementById("f")
+
+        var conn = new WebSocket("ws://localhost:8080/ws");
+        conn.binaryType = 'arraybuffer'
+        conn.onclose = function(evt) {
+            data.textContent = 'Connection closed';
+        }
+        let imagedata = ctx.createImageData(640,480)
+        let fps = 0
+        conn.onmessage = function(evt) {
+            let t1 = performance.now()
+            fps = (1 / (t1 - t)) * 1000
+            // console.log("fps: ", fps)
+            f.innerHTML = fps
+
+            let data = new Uint8Array(evt.data)
+            // console.log(data)
+            imagedata.data.set(data)
+            ctx.putImageData(imagedata, 0, 0)
+
+            t = t1
+        }
+        conn.onopen = function(evt) {
+            console.log("OPEN");
+            conn.send("hello")
+        }
+
+        let t = performance.now()
+    })();
+</script>
+</body>
+</html>
