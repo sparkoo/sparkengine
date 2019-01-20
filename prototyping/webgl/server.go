@@ -9,7 +9,6 @@ import (
 )
 
 const (
-	timeout        = 1 * time.Second
 	FRAME_WIDTH    = 640
 	FRAME_HEIGHT   = 480
 	FRAME_BYTESIZE = FRAME_WIDTH * FRAME_HEIGHT * 4
