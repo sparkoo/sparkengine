@@ -5,13 +5,29 @@
     <title>Title</title>
     <style>
         #mycanvas {
-            border: 1px solid black;
+            /*border: 1px solid black;*/
+            margin: 0;
+            padding: 0;
+            background-color: white;
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 640px;
+            height: 480px;
+            background-color: black;
+        }
+        #fpsbox {
+            position: absolute;
+            left: 0;
+            top: 0;
         }
     </style>
 </head>
 <body>
-fps: <span id="f"></span>
-<br />
+<div id="fpsbox">
+    fps: <span id="f"></span>
+</div>
 <canvas id="mycanvas" width="320" height="200"></canvas>
 <script type="text/javascript">
     (function() {
@@ -27,7 +43,7 @@ fps: <span id="f"></span>
         conn.onclose = function(evt) {
             data.textContent = 'Connection closed';
         }
-        let imagedata = ctx.createImageData(640,480)
+        let imagedata = ctx.createImageData(canvas.width,canvas.height)
         let fps = 0
         conn.onmessage = function(evt) {
             let t1 = performance.now()
