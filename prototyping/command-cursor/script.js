@@ -59,5 +59,5 @@ let conn
 
 function updatemouse(move) {
     console.log(move.movementX, move.movementY)
-    conn.send({x: move.movementX, y: move.movementY})
+    conn.send([move.movementX, move.movementY])
 }

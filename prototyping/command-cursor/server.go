@@ -7,6 +7,8 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -46,7 +48,7 @@ func echo(w http.ResponseWriter, r *http.Request) {
 		log.Printf("recv: %s, %v", message, mt)
 		//c.EnableWriteCompression(true)
 
-		go read()
+		go read(c)
 
 		for {
 			// allocate new framebuffer for each frame to clean it
@@ -69,13 +71,33 @@ func echo(w http.ResponseWriter, r *http.Request) {
 				log.Fatal(err)
 			}
 			//fmt.Println(response)
-			time.Sleep(1 * time.Second)
+			time.Sleep(15 * time.Millisecond)
 		}
 	}
 }
 
-func read() {
-
+func read(c *websocket.Conn) {
+	for {
+		_, message, err := c.ReadMessage()
+		if err != nil {
+			log.Println("read:", err)
+			break
+		}
+		coords := strings.Split(string(message), ",")
+		x, y := coords[0], coords[1]
+		fx, err := strconv.ParseFloat(x, 64)
+		if err == nil {
+			cursor.xpos += fx
+		} else {
+			log.Fatal(err)
+		}
+		fy, err := strconv.ParseFloat(y, 64)
+		if err == nil {
+			cursor.ypos += fy
+		} else {
+			log.Fatal(err)
+		}
+	}
 }
 
 func render(res []byte, c *Cursor) {
