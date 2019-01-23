@@ -87,13 +87,23 @@ func read(c *websocket.Conn) {
 		x, y := coords[0], coords[1]
 		fx, err := strconv.ParseFloat(x, 64)
 		if err == nil {
-			cursor.xpos += fx
+			newxpos := cursor.xpos + fx
+			if newxpos < 0 {
+				cursor.xpos = 0
+			} else if newxpos <= FRAME_WIDTH {
+				cursor.xpos += fx
+			}
 		} else {
 			log.Fatal(err)
 		}
 		fy, err := strconv.ParseFloat(y, 64)
 		if err == nil {
-			cursor.ypos += fy
+			newypos := cursor.ypos + fy
+			if newypos < 0 {
+				cursor.ypos = 0
+			} else if newypos <= FRAME_HEIGHT {
+				cursor.ypos += fy
+			}
 		} else {
 			log.Fatal(err)
 		}
@@ -105,6 +115,9 @@ func render(res []byte, c *Cursor) {
 		x := c.getXoffset() + p.x
 		y := c.getYoffset() + p.y
 		i := (x + (FRAME_WIDTH * y)) * 4
+		if i < 0 || i+3 >= FRAME_BYTESIZE {
+			continue
+		}
 		res[i] = p.color[0]
 		res[i+1] = p.color[1]
 		res[i+2] = p.color[2]

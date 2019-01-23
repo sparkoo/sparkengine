@@ -1,26 +1,26 @@
 let conn
-
+const canvas = document.getElementById("mycanvas");
 (function() {
-    const canvas = document.getElementById("mycanvas");
+
     canvas.width = 640
     canvas.height = 480
     const ctx = canvas.getContext("2d");
 
     let lockedMouse = false
 
-    canvas.addEventListener("mousedown", function (e) {
-        canvas.requestPointerLock()
-    })
+    canvas.addEventListener("mousedown", requestLock)
 
     document.addEventListener("pointerlockchange", function (e) {
         if (!lockedMouse) {
             console.log("locked")
             lockedMouse = true
             canvas.addEventListener("mousemove", updatemouse)
+            canvas.removeEventListener("mousedown", requestLock)
         } else {
             console.log("unlocked")
             lockedMouse = false
             canvas.removeEventListener("mousemove", updatemouse)
+            canvas.addEventListener("mousedown", requestLock)
         }
     })
 
@@ -57,7 +57,11 @@ let conn
     let t = performance.now()
 })();
 
+function requestLock() {
+    canvas.requestPointerLock()
+}
+
 function updatemouse(move) {
-    console.log(move.movementX, move.movementY)
+    // console.log(move.movementX, move.movementY)
     conn.send([move.movementX, move.movementY])
 }
