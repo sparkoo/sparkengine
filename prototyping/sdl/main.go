@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	WIDTH            = 320
-	HEIGHT           = 240
+	WIDTH            = 640
+	HEIGHT           = 480
 	FRAMEBUFFER_SIZE = WIDTH * HEIGHT * 4
 )
 
@@ -92,7 +92,7 @@ func draw(texture *sdl.Texture) {
 	renderer.Present()
 	handlefps()
 
-	time.Sleep(15 * time.Millisecond)
+	//time.Sleep(15 * time.Millisecond)
 }
 
 var frames = 0
@@ -111,5 +111,8 @@ func handlefps() {
 
 func main() {
 	runtime.LockOSThread()
+
+	fmt.Println("width:", WIDTH, "; height:", HEIGHT, "; pixels:", WIDTH*HEIGHT)
+
 	os.Exit(run())
 }
