@@ -50,12 +50,32 @@ func run() int {
 	}
 	defer texture.Destroy()
 
-	for i := 0; i < FRAMEBUFFER_SIZE; i += 4 {
+	ball := NewBall(0, 0, 10, 10, 1.2, 1.5)
+
+	for {
 		framebuffer = make([]byte, FRAMEBUFFER_SIZE)
-		framebuffer[i] = 255
-		framebuffer[i + 1] = 255
-		framebuffer[i + 2] = 255
-		framebuffer[i + 3] = 255
+		for _, p := range ball.getPixels() {
+			x := ball.getXoffset() + p.x
+			y := ball.getYoffset() + p.y
+			i := (x + (WIDTH * y)) * 4
+			framebuffer[i] = p.color[0]
+			framebuffer[i+1] = p.color[1]
+			framebuffer[i+2] = p.color[2]
+			framebuffer[i+3] = p.color[3]
+		}
+
+		xPot := int(ball.xpos + ball.xvel)
+		if xPot < 0 || xPot+ball.xsize >= WIDTH {
+			ball.xvel *= -1
+		}
+
+		yPot := int(ball.ypos + ball.yvel)
+		if yPot < 0 || yPot+ball.ysize >= HEIGHT {
+			ball.yvel *= -1
+		}
+
+		ball.xpos += ball.xvel
+		ball.ypos += ball.yvel
 		draw(texture)
 	}
 
@@ -69,6 +89,7 @@ func draw(texture *sdl.Texture) {
 	renderer.Clear()
 	renderer.Copy(texture, nil, nil)
 	renderer.Present()
+	sdl.Delay(16)
 }
 
 func main() {
