@@ -5,23 +5,15 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 	"os"
 	"runtime"
-	"time"
 )
-
-type Pixel struct {
-	R uint8
-	G uint8
-	B uint8
-	A uint8
-}
 
 const (
-	HEIGHT           = 480
-	WIDTH            = 640
-	FRAMEBUFFER_SIZE = WIDTH * HEIGHT
+	WIDTH            = 320
+	HEIGHT           = 240
+	FRAMEBUFFER_SIZE = WIDTH * HEIGHT * 4
 )
 
-var framebuffer = make([]Pixel, FRAMEBUFFER_SIZE)
+var framebuffer = make([]byte, FRAMEBUFFER_SIZE)
 var renderer *sdl.Renderer
 
 func run() int {
@@ -52,33 +44,27 @@ func run() int {
 
 	fmt.Printf("%v\n", surface)
 
-	texture, err := renderer.CreateTexture(sdl.PIXELTYPE_ARRAYU8, sdl.TEXTUREACCESS_STREAMING, WIDTH, HEIGHT)
+	texture, err := renderer.CreateTexture(sdl.PIXELFORMAT_ABGR8888, sdl.TEXTUREACCESS_STREAMING, WIDTH, HEIGHT)
 	if err != nil {
 		panic(err)
 	}
 	defer texture.Destroy()
 
-	fmt.Printf("%v\n", texture)
-
-	// https://wiki.libsdl.org/SDL_RenderReadPixels
+	for i := 0; i < FRAMEBUFFER_SIZE; i += 4 {
+		framebuffer[i] = 255
+		draw(texture)
+	}
 
 	sdl.Delay(2000)
 
 	return 0
 }
 
-func draw() {
-	t1 := time.Now()
+func draw(texture *sdl.Texture) {
+	texture.Update(nil, framebuffer, WIDTH*4)
 	renderer.Clear()
-	for i, p := range framebuffer {
-		renderer.SetDrawColor(p.R, p.G, p.B, p.A)
-		x := i % WIDTH
-		y := i / WIDTH
-		renderer.DrawPoint(int32(x), int32(y))
-	}
+	renderer.Copy(texture, nil, nil)
 	renderer.Present()
-	t2 := time.Now().Sub(t1)
-	fmt.Printf("frame rendered in %dms\n", t2.Nanoseconds()/1000/1000)
 }
 
 func main() {
