@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/veandco/go-sdl2/sdl"
 	"os"
+	"runtime"
 	"time"
 )
 
@@ -43,12 +44,25 @@ func run() int {
 	}
 	defer renderer.Destroy()
 
-	for i := range framebuffer{
-		framebuffer[i] = Pixel{255, 255, 255, 255}
-		draw()
+	surface, err := window.GetSurface()
+	if err != nil {
+		panic(err)
 	}
+	defer surface.Free()
 
-	sdl.Delay(20000)
+	fmt.Printf("%v\n", surface)
+
+	texture, err := renderer.CreateTexture(sdl.PIXELTYPE_ARRAYU8, sdl.TEXTUREACCESS_STREAMING, WIDTH, HEIGHT)
+	if err != nil {
+		panic(err)
+	}
+	defer texture.Destroy()
+
+	fmt.Printf("%v\n", texture)
+
+	// https://wiki.libsdl.org/SDL_RenderReadPixels
+
+	sdl.Delay(2000)
 
 	return 0
 }
@@ -64,9 +78,10 @@ func draw() {
 	}
 	renderer.Present()
 	t2 := time.Now().Sub(t1)
-	fmt.Printf("frame rendered in %dms\n", t2.Nanoseconds() / 1000 / 1000)
+	fmt.Printf("frame rendered in %dms\n", t2.Nanoseconds()/1000/1000)
 }
 
 func main() {
+	runtime.LockOSThread()
 	os.Exit(run())
 }
