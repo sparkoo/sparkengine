@@ -52,6 +52,9 @@ func run() int {
 
 	for i := 0; i < FRAMEBUFFER_SIZE; i += 4 {
 		framebuffer[i] = 255
+		framebuffer[i + 1] = 255
+		framebuffer[i + 2] = 255
+		framebuffer[i + 3] = 255
 		draw(texture)
 	}
 
