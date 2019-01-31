@@ -5,6 +5,7 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 	"os"
 	"runtime"
+	"time"
 )
 
 const (
@@ -89,7 +90,23 @@ func draw(texture *sdl.Texture) {
 	renderer.Clear()
 	renderer.Copy(texture, nil, nil)
 	renderer.Present()
-	sdl.Delay(16)
+	handlefps()
+
+	time.Sleep(15 * time.Millisecond)
+}
+
+var frames = 0
+var t1 = time.Now()
+
+func handlefps() {
+	frames++
+	if frames >= 1000 {
+		duration := float64(time.Now().Sub(t1).Nanoseconds()) / 1000 / 1000
+		fps := int(float64(frames) / (duration / 1000))
+		fmt.Println(fps, "fps")
+		t1 = time.Now()
+		frames = 0
+	}
 }
 
 func main() {
