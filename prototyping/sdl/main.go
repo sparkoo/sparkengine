@@ -59,7 +59,9 @@ func run() int {
 		panic(err)
 	}
 
-	for {
+	sdl.SetRelativeMouseMode(true)
+
+	for i := 0 ; i < 1000; i++{
 		framebuffer = make([]byte, FRAMEBUFFER_SIZE)
 		for _, p := range ball.getPixels() {
 			x := ball.getXoffset() + p.x
@@ -90,6 +92,8 @@ func run() int {
 		ball.ypos += ball.yvel
 		draw(texture)
 	}
+
+	sdl.SetRelativeMouseMode(false)
 
 	sdl.Delay(2000)
 
