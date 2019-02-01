@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/veandco/go-sdl2/sdl"
 	"os"
+	"reflect"
 	"runtime"
 	"time"
 )
@@ -53,6 +54,11 @@ func run() int {
 
 	ball := NewBall(0, 0, 10, 10, 1.2, 1.5)
 
+	err = sdl.WarpMouseGlobal(WIDTH / 2, HEIGHT / 2)
+	if err != nil {
+		panic(err)
+	}
+
 	for {
 		framebuffer = make([]byte, FRAMEBUFFER_SIZE)
 		for _, p := range ball.getPixels() {
@@ -64,6 +70,11 @@ func run() int {
 			framebuffer[i+2] = p.color[2]
 			framebuffer[i+3] = p.color[3]
 		}
+
+		if event := sdl.PollEvent(); event != nil {
+			handleEvent(event)
+		}
+
 
 		xPot := int(ball.xpos + ball.xvel)
 		if xPot < 0 || xPot+ball.xsize >= WIDTH {
@@ -83,6 +94,27 @@ func run() int {
 	sdl.Delay(2000)
 
 	return 0
+}
+
+func handleEvent(event sdl.Event) {
+	switch t := event.(type) {
+	case *sdl.MouseMotionEvent:
+		fmt.Printf("[%d ms] MouseMotion\ttype:%d\tid:%d\tx:%d\ty:%d\txrel:%d\tyrel:%d\n",
+			t.Timestamp, t.Type, t.Which, t.X, t.Y, t.XRel, t.YRel)
+	case *sdl.MouseButtonEvent:
+		fmt.Printf("[%d ms] MouseButton\ttype:%d\tid:%d\tx:%d\ty:%d\tbutton:%d\tstate:%d\n",
+			t.Timestamp, t.Type, t.Which, t.X, t.Y, t.Button, t.State)
+	case *sdl.MouseWheelEvent:
+		fmt.Printf("[%d ms] MouseWheel\ttype:%d\tid:%d\tx:%d\ty:%d\n",
+			t.Timestamp, t.Type, t.Which, t.X, t.Y)
+	case *sdl.KeyboardEvent:
+		fmt.Printf("[%d ms] Keyboard\ttype:%d\tsym:%c\tmodifiers:%d\tstate:%d\trepeat:%d\n",
+			t.Timestamp, t.Type, t.Keysym.Sym, t.Keysym.Mod, t.State, t.Repeat)
+	case *sdl.UserEvent:
+		fmt.Printf("[%d ms] UserEvent\tcode:%d\n", t.Timestamp, t.Code)
+	default:
+		fmt.Printf("Unknown event: [%v] - [%v]\n", event, reflect.TypeOf(event).String())
+	}
 }
 
 func draw(texture *sdl.Texture) {
