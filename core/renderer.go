@@ -27,7 +27,7 @@ func (r sdlRenderer) destroy() {
 }
 
 func (sdlRenderer) renderFrame() {
-	log.Println("frame rendered")
+	//log.Println("frame rendered")
 }
 
 func (r sdlRenderer) init(conf *conf) {

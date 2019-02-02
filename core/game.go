@@ -1,6 +1,7 @@
 package core
 
 import (
+	"github.com/sparkoo/sparkengine/scene"
 	"log"
 	"time"
 )
@@ -8,10 +9,16 @@ import (
 type game struct {
 	running bool
 	conf *conf
+
+	objects []scene.Object
 }
 
 func NewGame(conf *conf) *game {
-	return &game{running: false, conf: conf}
+	return &game{running: false, conf: conf, objects: make([]scene.Object, 0)}
+}
+
+func (g *game) AddObject(o scene.Object) {
+	g.objects = append(g.objects, o)
 }
 
 func (g *game) Start(conf *conf, action func()) {
@@ -22,18 +29,20 @@ func (g *game) Start(conf *conf, action func()) {
 	go frameRenderer(g, renderer, conf)
 	go gameTicker(g, conf, action)
 
-	time.Sleep(time.Second * 1)
 	g.run()
-	time.Sleep(time.Second * 1)
-	g.pause()
-	time.Sleep(time.Second * 1)
+	for g.running {
+		time.Sleep(1 * time.Second)
+	}
+	time.Sleep(1 * time.Second)
 }
 
 func (g *game) run() {
+	log.Println("run the game!")
 	g.running = true
 }
 
-func (g *game) pause() {
+func (g *game) stop() {
+	log.Println("stop the game!")
 	g.running = false
 }
 
