@@ -8,10 +8,13 @@ import (
 var running = true
 
 func Start(conf *Conf, action func()) {
+	renderer := sdlRenderer{}
+	renderer.init(conf)
+
+	go frameRenderer(renderer, conf)
 	go gameTicker(conf, action)
-	go frameRenderer(conf)
 	fmt.Println("doing something else")
-	time.Sleep(time.Millisecond * 1500)
+	time.Sleep(time.Millisecond * 500)
 }
 
 func gameTicker(conf *Conf, action func()) {
@@ -22,10 +25,10 @@ func gameTicker(conf *Conf, action func()) {
 	}
 }
 
-func frameRenderer(conf *Conf) {
+func frameRenderer(renderer renderer, conf *Conf) {
 	timePerFrame := time.Microsecond / time.Duration(conf.FPS)
 	frameTicker := time.NewTicker(timePerFrame * time.Microsecond)	// this ticker never stops
 	for range frameTicker.C {
-		renderFrame()
+		renderer.renderFrame()
 	}
 }
