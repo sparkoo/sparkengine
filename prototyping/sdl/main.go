@@ -33,7 +33,6 @@ func run() int {
 
 	renderer, err = sdl.CreateRenderer(window, -1, sdl.RENDERER_ACCELERATED)
 	if err != nil {
-		//fmt.Fprintf(os.Stderr, "Failed to create renderer: %s\n", err)
 		panic(err)
 	}
 	defer renderer.Destroy()
