@@ -63,7 +63,7 @@ func frameRenderer(g *game, renderer renderer, conf *conf) {
 	frameTicker := time.NewTicker(timePerFrame) // this ticker never stops
 	for range frameTicker.C {
 		if g.running {
-			renderer.renderFrame()
+			renderer.renderFrame(g.objects)
 		}
 	}
 }

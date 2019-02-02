@@ -1,13 +1,14 @@
 package core
 
 import (
+	"github.com/sparkoo/sparkengine/scene"
 	"github.com/veandco/go-sdl2/sdl"
 	"log"
 )
 
 type renderer interface {
 	init(conf *conf)
-	renderFrame()
+	renderFrame(objects []scene.Object)
 	destroy()
 }
 
@@ -26,7 +27,7 @@ func (r sdlRenderer) destroy() {
 	log.Println("done")
 }
 
-func (sdlRenderer) renderFrame() {
+func (sdlRenderer) renderFrame(objects []scene.Object) {
 	//log.Println("frame rendered")
 }
 
