@@ -63,6 +63,7 @@ func run() int {
 	}
 
 	sdl.SetRelativeMouseMode(true)
+	//window.SetFullscreen(sdl.WINDOW_FULLSCREEN)
 
 	for running {
 		framebuffer = make([]byte, FRAMEBUFFER_SIZE)
@@ -83,6 +84,7 @@ func run() int {
 		draw(texture)
 	}
 
+	window.SetFullscreen(0)
 	sdl.SetRelativeMouseMode(false)
 
 	sdl.Delay(200)
