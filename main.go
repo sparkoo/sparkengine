@@ -12,7 +12,9 @@ const FPS = 30
 func main() {
 	conf := core.NewConf(FPS, FPS * 2, SWIDTH, SHEIGHT)
 	g := core.NewGame(conf)
-	b := scene.NewBall(0, 0, 3.3, 4.5)
+
+	b := NewBall(0, 0, 3.3, 4.5)
+
 	s := scene.NewScene(func() {
 		b.Move(1, SWIDTH, SHEIGHT)
 	})

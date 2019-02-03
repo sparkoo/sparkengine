@@ -1,4 +1,6 @@
-package scene
+package main
+
+import "github.com/sparkoo/sparkengine/scene"
 
 type Ball struct {
 	xpos float64
@@ -13,14 +15,14 @@ func NewBall(xpos float64, ypos float64, xvel float64, yvel float64) *Ball {
 
 const size = 10
 
-var ballPixels []Pixel
+var ballPixels []scene.Pixel
 
 func init() {
-	ballPixels = make([]Pixel, size*size)
+	ballPixels = make([]scene.Pixel, size*size)
 	c := 0
 	for i := 0; i < 10; i++ {
 		for j := 0; j < 10; j++ {
-			ballPixels[c] = NewPixel(i, j, [4]byte{127, 127, 127, 127})
+			ballPixels[c] = scene.NewPixel(i, j, [4]byte{127, 127, 127, 127})
 			c++
 		}
 	}
@@ -42,7 +44,7 @@ func (b *Ball) GetYsize() int {
 	return size
 }
 
-func (b *Ball) GetPixels() []Pixel {
+func (b *Ball) GetPixels() []scene.Pixel {
 	return ballPixels
 }
 
