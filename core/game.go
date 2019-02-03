@@ -22,8 +22,10 @@ func (g *game) Start(conf *Conf, s *scene.Scene) {
 	renderer.init(conf)
 	defer renderer.destroy()
 
+	g.currentScene = s
+
 	go frameRenderer(g, renderer, conf)
-	go gameTicker(g, conf, s)
+	go gameTicker(g, conf)
 
 	g.run()
 	for g.running {
@@ -42,13 +44,13 @@ func (g *game) stop() {
 	g.running = false
 }
 
-func gameTicker(g *game, conf *Conf, s *scene.Scene) {
+func gameTicker(g *game, conf *Conf) {
 	timePerTick := time.Second / time.Duration(conf.tps)
 	log.Println("timePerTick: ", timePerTick)
 	ticker := time.NewTicker(timePerTick) // this ticker never stops
 	for range ticker.C {
 		if g.running {
-			s.Tick()
+			g.currentScene.Tick()
 		}
 	}
 }
