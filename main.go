@@ -13,8 +13,9 @@ func main() {
 	conf := core.NewConf(FPS, FPS * 2, SWIDTH, SHEIGHT)
 	g := core.NewGame(conf)
 	b := scene.NewBall(0, 0, 1.2, .8)
-	g.AddObject(b)
-	g.Start(conf, func() {
+	s := scene.NewScene(func() {
 		b.Move(1, SWIDTH, SHEIGHT)
 	})
+	s.AddObject(b)
+	g.Start(conf, s)
 }

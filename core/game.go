@@ -10,24 +10,20 @@ type game struct {
 	running bool
 	conf *Conf
 
-	objects []scene.Object
+	currentScene *scene.Scene
 }
 
 func NewGame(conf *Conf) *game {
-	return &game{running: false, conf: conf, objects: make([]scene.Object, 0)}
+	return &game{running: false, conf: conf}
 }
 
-func (g *game) AddObject(o scene.Object) {
-	g.objects = append(g.objects, o)
-}
-
-func (g *game) Start(conf *Conf, action func()) {
+func (g *game) Start(conf *Conf, s *scene.Scene) {
 	renderer := &sdlRenderer{}
 	renderer.init(conf)
 	defer renderer.destroy()
 
 	go frameRenderer(g, renderer, conf)
-	go gameTicker(g, conf, action)
+	go gameTicker(g, conf, s)
 
 	g.run()
 	for g.running {
@@ -46,13 +42,13 @@ func (g *game) stop() {
 	g.running = false
 }
 
-func gameTicker(g *game, conf *Conf, action func()) {
+func gameTicker(g *game, conf *Conf, s *scene.Scene) {
 	timePerTick := time.Second / time.Duration(conf.tps)
 	log.Println("timePerTick: ", timePerTick)
 	ticker := time.NewTicker(timePerTick) // this ticker never stops
 	for range ticker.C {
 		if g.running {
-			action()
+			s.Tick()
 		}
 	}
 }
@@ -63,7 +59,7 @@ func frameRenderer(g *game, renderer renderer, conf *Conf) {
 	frameTicker := time.NewTicker(timePerFrame) // this ticker never stops
 	for range frameTicker.C {
 		if g.running {
-			renderer.renderFrame(g.objects)
+			renderer.renderFrame(g.currentScene.GetObjects())
 		}
 	}
 }
