@@ -1,19 +1,19 @@
 package scene
 
 type Object interface {
-	getXoffset() int
-	getYoffset() int
-	getXsize() int
-	getYsize() int
-	getPixels() []Pixel
+	GetXoffset() int
+	GetYoffset() int
+	GetXsize() int
+	GetYsize() int
+	GetPixels() []Pixel
 }
 
 type Pixel struct {
-	x     int
-	y     int
-	color [4]byte
+	X     int
+	Y     int
+	Color [4]byte
 }
 
-func NewPixel(x int, y int, color [4]byte) *Pixel {
-	return &Pixel{x: x, y: y, color: color}
+func NewPixel(x int, y int, color [4]byte) Pixel {
+	return Pixel{X: x, Y: y, Color: color}
 }

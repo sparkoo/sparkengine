@@ -8,12 +8,12 @@ import (
 
 type game struct {
 	running bool
-	conf *conf
+	conf *Conf
 
 	objects []scene.Object
 }
 
-func NewGame(conf *conf) *game {
+func NewGame(conf *Conf) *game {
 	return &game{running: false, conf: conf, objects: make([]scene.Object, 0)}
 }
 
@@ -21,7 +21,7 @@ func (g *game) AddObject(o scene.Object) {
 	g.objects = append(g.objects, o)
 }
 
-func (g *game) Start(conf *conf, action func()) {
+func (g *game) Start(conf *Conf, action func()) {
 	renderer := &sdlRenderer{}
 	renderer.init(conf)
 	defer renderer.destroy()
@@ -46,7 +46,7 @@ func (g *game) stop() {
 	g.running = false
 }
 
-func gameTicker(g *game, conf *conf, action func()) {
+func gameTicker(g *game, conf *Conf, action func()) {
 	timePerTick := time.Second / time.Duration(conf.tps)
 	log.Println("timePerTick: ", timePerTick)
 	ticker := time.NewTicker(timePerTick) // this ticker never stops
@@ -57,7 +57,7 @@ func gameTicker(g *game, conf *conf, action func()) {
 	}
 }
 
-func frameRenderer(g *game, renderer renderer, conf *conf) {
+func frameRenderer(g *game, renderer renderer, conf *Conf) {
 	timePerFrame := time.Second / time.Duration(conf.fps)
 	log.Println("timePerFrame: ", timePerFrame)
 	frameTicker := time.NewTicker(timePerFrame) // this ticker never stops

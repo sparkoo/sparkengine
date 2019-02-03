@@ -5,11 +5,16 @@ import (
 	"github.com/sparkoo/sparkengine/scene"
 )
 
+const SWIDTH = 320
+const SHEIGHT = 240
+const FPS = 30
+
 func main() {
-	conf := core.NewConf(30, 30, 320, 240)
+	conf := core.NewConf(FPS, FPS * 2, SWIDTH, SHEIGHT)
 	g := core.NewGame(conf)
-	b := scene.NewBall()
+	b := scene.NewBall(0, 0, 1.2, .8)
 	g.AddObject(b)
 	g.Start(conf, func() {
+		b.Move(1, SWIDTH, SHEIGHT)
 	})
 }

@@ -7,18 +7,37 @@ import (
 )
 
 type renderer interface {
-	init(conf *conf)
+	init(conf *Conf)
 	renderFrame(objects []scene.Object)
 	destroy()
 }
 
 type sdlRenderer struct {
+	framebuffer     []byte
+	framebufferSize int
+	conf *Conf
+
 	texture *sdl.Texture
 	window *sdl.Window
 	renderer *sdl.Renderer
 }
 
-func (r sdlRenderer) destroy() {
+func (r *sdlRenderer) init(conf *Conf) {
+	log.Println("initializing SDL renderer ...")
+	r.conf = conf
+
+	r.framebufferSize = int(conf.screenWidth * conf.screenHeight * 4)
+	r.framebuffer = make([]byte, r.framebufferSize)
+
+	initSDL()
+	r.window = initWindow(conf)
+	r.renderer = initRenderer(r.window)
+	r.texture = initTexture(r.renderer, conf)
+	r.texture.Update(nil, r.framebuffer, int(conf.screenWidth * 4))
+	log.Println("done")
+}
+
+func (r *sdlRenderer) destroy() {
 	log.Println("cleaning up ...")
 	r.window.Destroy()
 	r.renderer.Destroy()
@@ -27,17 +46,24 @@ func (r sdlRenderer) destroy() {
 	log.Println("done")
 }
 
-func (sdlRenderer) renderFrame(objects []scene.Object) {
-	//log.Println("frame rendered")
-}
+func (r *sdlRenderer) renderFrame(objects []scene.Object) {
+	framebuffer := make([]byte, r.framebufferSize)
+	for _, o := range objects {
+		for _, p := range o.GetPixels() {
+			x := o.GetXoffset() + p.X
+			y := o.GetYoffset() + p.Y
+			i := (x + (int(r.conf.screenWidth) * y)) * 4
+			framebuffer[i] = p.Color[0]
+			framebuffer[i+1] = p.Color[1]
+			framebuffer[i+2] = p.Color[2]
+			framebuffer[i+3] = p.Color[3]
+		}
+	}
 
-func (r sdlRenderer) init(conf *conf) {
-	log.Println("initializing SDL renderer ...")
-	initSDL()
-	window := initWindow(conf)
-	renderer := initRenderer(window)
-	r.texture = initTexture(renderer, conf)
-	log.Println("done")
+	r.texture.Update(nil, framebuffer, int(r.conf.screenWidth * 4))
+	r.renderer.Clear()
+	r.renderer.Copy(r.texture, nil, nil)
+	r.renderer.Present()
 }
 
 func initSDL() {
@@ -46,7 +72,7 @@ func initSDL() {
 	}
 }
 
-func initWindow(conf *conf) *sdl.Window {
+func initWindow(conf *Conf) *sdl.Window {
 	window, err := sdl.CreateWindow("test", sdl.WINDOWPOS_UNDEFINED, sdl.WINDOWPOS_UNDEFINED,
 		conf.screenWidth, conf.screenHeight, sdl.WINDOW_SHOWN)
 	if err != nil {
@@ -63,7 +89,7 @@ func initRenderer(window *sdl.Window) *sdl.Renderer {
 	return renderer
 }
 
-func initTexture(renderer *sdl.Renderer, conf *conf) *sdl.Texture {
+func initTexture(renderer *sdl.Renderer, conf *Conf) *sdl.Texture {
 	texture, err := renderer.CreateTexture(sdl.PIXELFORMAT_ABGR8888, sdl.TEXTUREACCESS_STREAMING,
 		conf.screenWidth, conf.screenHeight)
 	if err != nil {

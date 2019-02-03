@@ -7,8 +7,8 @@ type Ball struct {
 	yvel float64
 }
 
-func NewBall() *Ball {
-	return &Ball{0, 0, 1, 2}
+func NewBall(xpos float64, ypos float64, xvel float64, yvel float64) *Ball {
+	return &Ball{xpos, ypos, xvel, yvel}
 }
 
 const size = 10
@@ -16,31 +16,49 @@ const size = 10
 var ballPixels []Pixel
 
 func init() {
-	ballPixels := make([]*Pixel, size*size)
+	ballPixels = make([]Pixel, size*size)
 	c := 0
 	for i := 0; i < 10; i++ {
 		for j := 0; j < 10; j++ {
 			ballPixels[c] = NewPixel(i, j, [4]byte{127, 127, 127, 127})
+			c++
 		}
 	}
 }
 
-func (b *Ball) getXoffset() int {
+func (b *Ball) GetXoffset() int {
 	return int(b.xpos)
 }
 
-func (b *Ball) getYoffset() int {
+func (b *Ball) GetYoffset() int {
 	return int(b.ypos)
 }
 
-func (b *Ball) getXsize() int {
+func (b *Ball) GetXsize() int {
 	return size
 }
 
-func (b *Ball) getYsize() int {
+func (b *Ball) GetYsize() int {
 	return size
 }
 
-func (b *Ball) getPixels() []Pixel {
+func (b *Ball) GetPixels() []Pixel {
 	return ballPixels
+}
+
+func (b *Ball) Move(ticks int, sWidth int, sHeight int) {
+	for ti := 0; ti < ticks; ti++ {
+		xPot := int(b.xpos + b.xvel)
+		if xPot < 0 || xPot+b.GetXsize() >= sWidth {
+			b.xvel *= -1
+		}
+
+		yPot := int(b.ypos + b.yvel)
+		if yPot < 0 || yPot+b.GetYsize() >= sHeight {
+			b.yvel *= -1
+		}
+
+		b.xpos += b.xvel
+		b.ypos += b.yvel
+	}
 }
