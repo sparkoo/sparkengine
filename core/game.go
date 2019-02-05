@@ -17,15 +17,15 @@ func NewGame(conf *Conf) *game {
 	return &game{running: false, conf: conf}
 }
 
-func (g *game) Start(conf *Conf, s *scene.Scene) {
+func (g *game) Start(s *scene.Scene) {
 	renderer := &sdlRenderer{}
-	renderer.init(conf)
+	renderer.init(g.conf)
 	defer renderer.destroy()
 
 	g.currentScene = s
 
-	go frameRenderer(g, renderer, conf)
-	go gameTicker(g, conf)
+	go frameRenderer(g, renderer, g.conf)
+	go gameTicker(g, g.conf)
 
 	g.run()
 	for g.running {

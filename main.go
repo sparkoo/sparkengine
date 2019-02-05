@@ -10,8 +10,7 @@ const SHEIGHT = 240
 const FPS = 30
 
 func main() {
-	conf := core.NewConf(FPS, FPS * 2, SWIDTH, SHEIGHT)
-	g := core.NewGame(conf)
+	game := core.NewGame(core.NewConf(FPS, FPS * 2, SWIDTH, SHEIGHT))
 
 	b := NewBall(0, 0, 3.3, 4.5)
 
@@ -19,5 +18,6 @@ func main() {
 		b.Move(1, SWIDTH, SHEIGHT)
 	})
 	s.AddObject(b)
-	g.Start(conf, s)
+
+	game.Start(s)
 }
