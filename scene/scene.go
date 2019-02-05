@@ -28,3 +28,7 @@ func (s *Scene) GetObjects() []Object {
 func (s *Scene) Tick() {
 	s.tickAction()
 }
+
+func (s *Scene) AddEventListener(event, action func()) {
+
+}

@@ -2,6 +2,7 @@ package core
 
 import (
 	"github.com/sparkoo/sparkengine/scene"
+	"github.com/veandco/go-sdl2/sdl"
 	"log"
 	"time"
 )
@@ -49,6 +50,10 @@ func gameTicker(g *game, conf *Conf) {
 	log.Println("timePerTick: ", timePerTick)
 	ticker := time.NewTicker(timePerTick) // this ticker never stops
 	for range ticker.C {
+		if event := sdl.PollEvent(); event != nil {
+			handleEvent(event)
+		}
+
 		if g.running {
 			g.currentScene.Tick()
 		}
@@ -64,4 +69,8 @@ func frameRenderer(g *game, renderer renderer, conf *Conf) {
 			renderer.renderFrame(g.currentScene.GetObjects())
 		}
 	}
+}
+
+func handleEvent(event scene.Event) {
+
 }
