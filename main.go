@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"github.com/sparkoo/sparkengine/core"
 	"github.com/sparkoo/sparkengine/scene"
+	"github.com/veandco/go-sdl2/sdl"
 )
 
 const SWIDTH = 320
@@ -18,6 +20,9 @@ func main() {
 		b.Move(1, SWIDTH, SHEIGHT)
 	})
 	s.AddObject(b)
+	s.AddEventListener(sdl.MOUSEMOTION, func(event sdl.Event) {
+		fmt.Println(event)
+	})
 
 	game.Start(s)
 }

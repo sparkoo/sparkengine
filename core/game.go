@@ -9,9 +9,12 @@ import (
 
 type game struct {
 	running bool
-	conf *Conf
+	conf    *Conf
 
 	currentScene *scene.Scene
+
+	gameTicker  *time.Ticker
+	frameTicker *time.Ticker
 }
 
 func NewGame(conf *Conf) *game {
@@ -26,7 +29,7 @@ func (g *game) Start(s *scene.Scene) {
 	g.currentScene = s
 
 	go frameRenderer(g, renderer, g.conf)
-	go gameTicker(g, g.conf)
+	go gameTick(g, g.conf)
 
 	g.run()
 	for g.running {
@@ -45,13 +48,22 @@ func (g *game) stop() {
 	g.running = false
 }
 
-func gameTicker(g *game, conf *Conf) {
+func gameTick(g *game, conf *Conf) {
 	timePerTick := time.Second / time.Duration(conf.tps)
 	log.Println("timePerTick: ", timePerTick)
-	ticker := time.NewTicker(timePerTick) // this ticker never stops
-	for range ticker.C {
+	g.gameTicker = time.NewTicker(timePerTick) // this ticker never stops
+	for range g.gameTicker.C {
 		if event := sdl.PollEvent(); event != nil {
-			handleEvent(event)
+			switch t := event.(type) {
+			case *sdl.KeyboardEvent:
+				if t.Keysym.Scancode == 41 {
+					g.running = false
+					g.gameTicker.Stop()
+					g.frameTicker.Stop()
+				}
+			}
+
+			handleEvent(g, event)
 		}
 
 		if g.running {
@@ -63,14 +75,14 @@ func gameTicker(g *game, conf *Conf) {
 func frameRenderer(g *game, renderer renderer, conf *Conf) {
 	timePerFrame := time.Second / time.Duration(conf.fps)
 	log.Println("timePerFrame: ", timePerFrame)
-	frameTicker := time.NewTicker(timePerFrame) // this ticker never stops
-	for range frameTicker.C {
+	g.frameTicker = time.NewTicker(timePerFrame) // this ticker never stops
+	for range g.frameTicker.C {
 		if g.running {
 			renderer.renderFrame(g.currentScene.GetObjects())
 		}
 	}
 }
 
-func handleEvent(event scene.Event) {
-
+func handleEvent(g *game, event sdl.Event) {
+	g.currentScene.HandleEvents(event)
 }

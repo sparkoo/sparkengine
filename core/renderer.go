@@ -4,6 +4,7 @@ import (
 	"github.com/sparkoo/sparkengine/scene"
 	"github.com/veandco/go-sdl2/sdl"
 	"log"
+	"runtime"
 )
 
 type renderer interface {
@@ -24,6 +25,9 @@ type sdlRenderer struct {
 
 func (r *sdlRenderer) init(conf *Conf) {
 	log.Println("initializing SDL renderer ...")
+
+	runtime.LockOSThread()
+
 	r.conf = conf
 
 	r.framebufferSize = int(conf.screenWidth * conf.screenHeight * 4)
@@ -34,11 +38,14 @@ func (r *sdlRenderer) init(conf *Conf) {
 	r.renderer = initRenderer(r.window)
 	r.texture = initTexture(r.renderer, conf)
 	r.texture.Update(nil, r.framebuffer, int(conf.screenWidth * 4))
+
+	sdl.SetRelativeMouseMode(true)
 	log.Println("done")
 }
 
 func (r *sdlRenderer) destroy() {
 	log.Println("cleaning up ...")
+	sdl.SetRelativeMouseMode(false)
 	r.window.Destroy()
 	r.renderer.Destroy()
 	r.texture.Destroy()
