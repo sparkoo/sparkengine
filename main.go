@@ -15,13 +15,20 @@ func main() {
 	game := core.NewGame(core.NewConf(FPS, FPS * 2, SWIDTH, SHEIGHT))
 
 	b := NewBall(0, 0, 3.3, 4.5)
+	c := NewBall(0, 0, 0, 0)
 
 	s := scene.NewScene(func() {
 		b.Move(1, SWIDTH, SHEIGHT)
 	})
 	s.AddObject(b)
+	s.AddObject(c)
 	s.AddEventListener(sdl.MOUSEMOTION, func(event sdl.Event) {
 		fmt.Println(event)
+		switch t := event.(type) {
+		case *sdl.MouseMotionEvent:
+			c.xpos = float64(t.X)
+			c.ypos = float64(t.Y)
+		}
 	})
 
 	game.Start(s)

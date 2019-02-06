@@ -30,11 +30,14 @@ func (g *game) Start(s *scene.Scene) {
 
 	go frameRenderer(g, renderer, g.conf)
 	go gameTick(g, g.conf)
+	go handleEvents(g)
 
 	g.run()
+
 	for g.running {
 		time.Sleep(1 * time.Second)
 	}
+
 	time.Sleep(1 * time.Second)
 }
 
@@ -53,18 +56,6 @@ func gameTick(g *game, conf *Conf) {
 	log.Println("timePerTick: ", timePerTick)
 	g.gameTicker = time.NewTicker(timePerTick) // this ticker never stops
 	for range g.gameTicker.C {
-		if event := sdl.PollEvent(); event != nil {
-			switch t := event.(type) {
-			case *sdl.KeyboardEvent:
-				if t.Keysym.Scancode == 41 {
-					g.running = false
-					g.gameTicker.Stop()
-					g.frameTicker.Stop()
-				}
-			}
-
-			handleEvent(g, event)
-		}
 
 		if g.running {
 			g.currentScene.Tick()
@@ -79,6 +70,24 @@ func frameRenderer(g *game, renderer renderer, conf *Conf) {
 	for range g.frameTicker.C {
 		if g.running {
 			renderer.renderFrame(g.currentScene.GetObjects())
+		}
+	}
+}
+
+func handleEvents(g *game)  {
+	for g.running {
+		if event := sdl.PollEvent(); event != nil {
+			switch t := event.(type) {
+			case *sdl.KeyboardEvent:
+				if t.Keysym.Scancode == 41 {
+					log.Println("pressed esc. quitting game...")
+					g.running = false
+					g.gameTicker.Stop()
+					g.frameTicker.Stop()
+				}
+			}
+
+			handleEvent(g, event)
 		}
 	}
 }
