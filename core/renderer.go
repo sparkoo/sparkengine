@@ -60,10 +60,14 @@ func (r *sdlRenderer) renderFrame(objects []scene.Object) {
 			x := o.GetXoffset() + p.X
 			y := o.GetYoffset() + p.Y
 			i := (x + (int(r.conf.screenWidth) * y)) * 4
-			framebuffer[i] = p.Color[0]
-			framebuffer[i+1] = p.Color[1]
-			framebuffer[i+2] = p.Color[2]
-			framebuffer[i+3] = p.Color[3]
+
+			// fit pixel into the framebuffer ?
+			if i + 3 <= r.framebufferSize {
+				framebuffer[i] = p.Color[0]
+				framebuffer[i+1] = p.Color[1]
+				framebuffer[i+2] = p.Color[2]
+				framebuffer[i+3] = p.Color[3]
+			}
 		}
 	}
 
