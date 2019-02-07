@@ -30,12 +30,11 @@ func (g *game) Start(s *scene.Scene) {
 
 	go frameRenderer(g, renderer, g.conf)
 	go gameTick(g, g.conf)
-	go handleEvents(g)
 
 	g.run()
 
 	for g.running {
-		time.Sleep(1 * time.Second)
+		handleEvents(g)
 	}
 
 	time.Sleep(1 * time.Second)
@@ -74,21 +73,19 @@ func frameRenderer(g *game, renderer renderer, conf *Conf) {
 	}
 }
 
-func handleEvents(g *game)  {
-	for g.running {
-		if event := sdl.PollEvent(); event != nil {
-			switch t := event.(type) {
-			case *sdl.KeyboardEvent:
-				if t.Keysym.Scancode == 41 {
-					log.Println("pressed esc. quitting game...")
-					g.running = false
-					g.gameTicker.Stop()
-					g.frameTicker.Stop()
-				}
+func handleEvents(g *game) {
+	if event := sdl.PollEvent(); event != nil {
+		switch t := event.(type) {
+		case *sdl.KeyboardEvent:
+			if t.Keysym.Scancode == 41 {
+				log.Println("pressed esc. quitting game...")
+				g.running = false
+				g.gameTicker.Stop()
+				g.frameTicker.Stop()
 			}
-
-			handleEvent(g, event)
 		}
+
+		handleEvent(g, event)
 	}
 }
 

@@ -26,8 +26,6 @@ type sdlRenderer struct {
 func (r *sdlRenderer) init(conf *Conf) {
 	log.Println("initializing SDL renderer ...")
 
-	runtime.LockOSThread()
-
 	r.conf = conf
 
 	r.framebufferSize = int(conf.screenWidth * conf.screenHeight * 4)
@@ -78,6 +76,7 @@ func (r *sdlRenderer) renderFrame(objects []scene.Object) {
 }
 
 func initSDL() {
+	runtime.LockOSThread()
 	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
 		panic(err)
 	}
