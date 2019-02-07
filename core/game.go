@@ -54,10 +54,21 @@ func gameTick(g *game, conf *Conf) {
 	timePerTick := time.Second / time.Duration(conf.tps)
 	log.Println("timePerTick: ", timePerTick)
 	g.gameTicker = time.NewTicker(timePerTick) // this ticker never stops
+	framecounter := 0
+	t1 := time.Now()
 	for range g.gameTicker.C {
 
 		if g.running {
 			g.currentScene.Tick()
+			framecounter++
+
+			if framecounter == 100 {
+				tDiff := float64(time.Now().Sub(t1).Nanoseconds()) / 1000 / 1000
+				fps := float64(framecounter) / (tDiff / 1000)
+				log.Printf("tps: %.2f", fps)
+				t1 = time.Now()
+				framecounter = 0
+			}
 		}
 	}
 }
@@ -66,9 +77,21 @@ func frameRenderer(g *game, renderer renderer, conf *Conf) {
 	timePerFrame := time.Second / time.Duration(conf.fps)
 	log.Println("timePerFrame: ", timePerFrame)
 	g.frameTicker = time.NewTicker(timePerFrame) // this ticker never stops
+
+	framecounter := 0
+	t1 := time.Now()
 	for range g.frameTicker.C {
 		if g.running {
 			renderer.renderFrame(g.currentScene.GetObjects())
+			framecounter++
+
+			if framecounter == 200 {
+				tDiff := float64(time.Now().Sub(t1).Nanoseconds()) / 1000 / 1000
+				fps := float64(framecounter) / (tDiff / 1000)
+				log.Printf("fps: %.2f", fps)
+				t1 = time.Now()
+				framecounter = 0
+			}
 		}
 	}
 }
