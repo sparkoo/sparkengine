@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-type game struct {
+type Game struct {
 	running bool
 	conf    *Conf
 
@@ -17,11 +17,11 @@ type game struct {
 	frameTicker *time.Ticker
 }
 
-func NewGame(conf *Conf) *game {
-	return &game{running: false, conf: conf}
+func NewGame(conf *Conf) *Game {
+	return &Game{running: false, conf: conf}
 }
 
-func (g *game) Start(s *scene.Scene) {
+func (g *Game) Start(s *scene.Scene) {
 	renderer := &sdlRenderer{}
 	renderer.init(g.conf)
 	defer renderer.destroy()
@@ -40,17 +40,23 @@ func (g *game) Start(s *scene.Scene) {
 	time.Sleep(1 * time.Second)
 }
 
-func (g *game) run() {
-	log.Println("run the game!")
+func (g *Game) Quit() {
+	g.running = false
+	g.gameTicker.Stop()
+	g.frameTicker.Stop()
+}
+
+func (g *Game) run() {
+	log.Println("run the Game!")
 	g.running = true
 }
 
-func (g *game) stop() {
-	log.Println("stop the game!")
+func (g *Game) stop() {
+	log.Println("stop the Game!")
 	g.running = false
 }
 
-func gameTick(g *game, conf *Conf) {
+func gameTick(g *Game, conf *Conf) {
 	timePerTick := time.Second / time.Duration(conf.tps)
 	log.Println("timePerTick: ", timePerTick)
 	g.gameTicker = time.NewTicker(timePerTick) // this ticker never stops
@@ -73,7 +79,7 @@ func gameTick(g *game, conf *Conf) {
 	}
 }
 
-func frameRenderer(g *game, renderer renderer, conf *Conf) {
+func frameRenderer(g *Game, renderer renderer, conf *Conf) {
 	timePerFrame := time.Second / time.Duration(conf.fps)
 	log.Println("timePerFrame: ", timePerFrame)
 	g.frameTicker = time.NewTicker(timePerFrame) // this ticker never stops
@@ -96,15 +102,13 @@ func frameRenderer(g *game, renderer renderer, conf *Conf) {
 	}
 }
 
-func handleEvents(g *game) {
+func handleEvents(g *Game) {
 	if event := sdl.PollEvent(); event != nil {
 		switch t := event.(type) {
 		case *sdl.KeyboardEvent:
 			if t.Keysym.Scancode == 41 {
-				log.Println("pressed esc. quitting game...")
-				g.running = false
-				g.gameTicker.Stop()
-				g.frameTicker.Stop()
+				log.Println("pressed esc. quitting Game...")
+				g.Quit()
 			}
 		}
 
@@ -112,6 +116,6 @@ func handleEvents(g *game) {
 	}
 }
 
-func handleEvent(g *game, event sdl.Event) {
+func handleEvent(g *Game, event sdl.Event) {
 	g.currentScene.HandleEvents(event)
 }
