@@ -46,6 +46,12 @@ func (g *Game) Quit() {
 	g.frameTicker.Stop()
 }
 
+func (g *Game) SwitchScene(s *scene.Scene) {
+	g.stop()
+	g.currentScene = s
+	g.run()
+}
+
 func (g *Game) run() {
 	log.Println("run the Game!")
 	g.running = true
