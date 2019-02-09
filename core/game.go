@@ -1,6 +1,7 @@
 package core
 
 import (
+	"github.com/sparkoo/sparkengine/fpscounter"
 	"github.com/sparkoo/sparkengine/scene"
 	"github.com/veandco/go-sdl2/sdl"
 	"log"
@@ -66,21 +67,12 @@ func gameTick(g *Game, conf *Conf) {
 	timePerTick := time.Second / time.Duration(conf.tps)
 	log.Println("timePerTick: ", timePerTick)
 	g.gameTicker = time.NewTicker(timePerTick) // this ticker never stops
-	framecounter := 0
-	t1 := time.Now()
-	for range g.gameTicker.C {
 
+	fps := fpscounter.NewFpsCounter("ticks", 100)
+	for range g.gameTicker.C {
 		if g.running {
 			g.currentScene.Tick()
-			framecounter++
-
-			if framecounter == 100 {
-				tDiff := float64(time.Now().Sub(t1).Nanoseconds()) / 1000 / 1000
-				fps := float64(framecounter) / (tDiff / 1000)
-				log.Printf("tps: %.2f", fps)
-				t1 = time.Now()
-				framecounter = 0
-			}
+			fps.Tick()
 		}
 	}
 }
@@ -90,20 +82,11 @@ func frameRenderer(g *Game, renderer renderer, conf *Conf) {
 	log.Println("timePerFrame: ", timePerFrame)
 	g.frameTicker = time.NewTicker(timePerFrame) // this ticker never stops
 
-	framecounter := 0
-	t1 := time.Now()
+	fps := fpscounter.NewFpsCounter("frames", 100)
 	for range g.frameTicker.C {
 		if g.running {
 			renderer.renderFrame(g.currentScene.GetObjects())
-			framecounter++
-
-			if framecounter == 200 {
-				tDiff := float64(time.Now().Sub(t1).Nanoseconds()) / 1000 / 1000
-				fps := float64(framecounter) / (tDiff / 1000)
-				log.Printf("fps: %.2f", fps)
-				t1 = time.Now()
-				framecounter = 0
-			}
+			fps.Tick()
 		}
 	}
 }
