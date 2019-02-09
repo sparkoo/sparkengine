@@ -68,7 +68,7 @@ func gameTick(g *Game, conf *Conf) {
 	log.Println("timePerTick: ", timePerTick)
 	g.gameTicker = time.NewTicker(timePerTick) // this ticker never stops
 
-	fps := fpscounter.NewFpsCounter("ticks", 100)
+	fps := fpscounter.NewFpsCounter("ticks", 1000)
 	for range g.gameTicker.C {
 		if g.running {
 			g.currentScene.Tick()
@@ -82,7 +82,7 @@ func frameRenderer(g *Game, renderer renderer, conf *Conf) {
 	log.Println("timePerFrame: ", timePerFrame)
 	g.frameTicker = time.NewTicker(timePerFrame) // this ticker never stops
 
-	fps := fpscounter.NewFpsCounter("frames", 100)
+	fps := fpscounter.NewFpsCounter("frames", 2000)
 	for range g.frameTicker.C {
 		if g.running {
 			renderer.renderFrame(g.currentScene.GetObjects())
