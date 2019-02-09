@@ -29,6 +29,10 @@ func (s *Scene) AddObject(o Object) {
 	s.objects = append(s.objects, o)
 }
 
+func (s *Scene) AddObjects(o ...Object) {
+	s.objects = append(s.objects, o...)
+}
+
 func (s *Scene) GetObjects() []Object {
 	return s.objects
 }
