@@ -59,8 +59,6 @@ type Pixel struct {
 	Color Color
 }
 
-type Color [4]byte
-
 func NewPixel(x int, y int, color Color) Pixel {
 	return Pixel{X: x, Y: y, Color: color}
 }
