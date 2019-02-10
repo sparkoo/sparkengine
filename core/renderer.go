@@ -16,10 +16,10 @@ type renderer interface {
 type sdlRenderer struct {
 	framebuffer     []byte
 	framebufferSize int
-	conf *Conf
+	conf            *Conf
 
-	texture *sdl.Texture
-	window *sdl.Window
+	texture  *sdl.Texture
+	window   *sdl.Window
 	renderer *sdl.Renderer
 }
 
@@ -35,7 +35,7 @@ func (r *sdlRenderer) init(conf *Conf) {
 	r.window = initWindow(conf)
 	r.renderer = initRenderer(r.window)
 	r.texture = initTexture(r.renderer, conf)
-	r.texture.Update(nil, r.framebuffer, int(conf.screenWidth * 4))
+	r.texture.Update(nil, r.framebuffer, int(conf.screenWidth*4))
 
 	sdl.SetRelativeMouseMode(true)
 	log.Println("done")
@@ -60,16 +60,18 @@ func (r *sdlRenderer) renderFrame(objects []scene.Object) {
 			i := (x + (int(r.conf.screenWidth) * y)) * 4
 
 			// fit pixel into the framebuffer ?
-			if i + 3 <= r.framebufferSize {
+			if i+3 <= r.framebufferSize && i >= 0 {
 				framebuffer[i] = p.Color[0]
 				framebuffer[i+1] = p.Color[1]
 				framebuffer[i+2] = p.Color[2]
 				framebuffer[i+3] = p.Color[3]
+			} else {
+				log.Printf("[WARN] - framebuffer write out of index [%d]. framebuffer size [%d]\n", i, r.framebufferSize)
 			}
 		}
 	}
 
-	r.texture.Update(nil, framebuffer, int(r.conf.screenWidth * 4))
+	r.texture.Update(nil, framebuffer, int(r.conf.screenWidth*4))
 	r.renderer.Clear()
 	r.renderer.Copy(r.texture, nil, nil)
 	r.renderer.Present()
@@ -107,4 +109,3 @@ func initTexture(renderer *sdl.Renderer, conf *Conf) *sdl.Texture {
 	}
 	return texture
 }
-
