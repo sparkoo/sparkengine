@@ -56,10 +56,12 @@ func (o *Base) MoveTo(x float64, y float64) {
 type Pixel struct {
 	X     int
 	Y     int
-	Color [4]byte
+	Color Color
 }
 
-func NewPixel(x int, y int, color [4]byte) Pixel {
+type Color [4]byte
+
+func NewPixel(x int, y int, color Color) Pixel {
 	return Pixel{X: x, Y: y, Color: color}
 }
 
