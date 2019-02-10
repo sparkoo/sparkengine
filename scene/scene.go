@@ -50,3 +50,7 @@ func (s *Scene) HandleEvents(event sdl.Event) {
 		e(event)
 	}
 }
+
+func NoopTick() {
+
+}
