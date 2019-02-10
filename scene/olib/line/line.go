@@ -1,6 +1,10 @@
 package line
 
-import "github.com/sparkoo/sparkengine/scene"
+import (
+	"github.com/sparkoo/sparkengine/scene"
+	"log"
+	"math"
+)
 
 type Line struct {
 	*scene.Base
@@ -23,7 +27,7 @@ func NewLine(x1 float64, y1 float64, x2 float64, y2 float64, color scene.Color) 
 
 	return &Line{
 		Base:   scene.NewBase(x, y, xsize, ysize),
-		pixels: initPixels(x1, y1, x2, y2, color)}
+		pixels: initPixels(0, 0, x2-x1, y2-y1, color)}
 }
 
 func coords(x1 float64, y1 float64, x2 float64, y2 float64) (x float64, y float64, xsize int, ysize int) {
@@ -49,19 +53,68 @@ func coords(x1 float64, y1 float64, x2 float64, y2 float64) (x float64, y float6
 
 // TODO: this drawing works just for horizontal-ish lines. More vertical the line is, more broken it is.
 //  implement this https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm
-func initPixels(x1 float64, y1 float64, x2 float64, y2 float64, color scene.Color) []scene.Pixel {
-	pixels := make([]scene.Pixel, int(x2-x1))
-	ci := 0
+func initPixels(x0 float64, y0 float64, x1 float64, y1 float64, color scene.Color) []scene.Pixel {
+	pixels := make([]scene.Pixel, 0)
 
-	dx := x2 - x1
-	dy := y2 - y1
-
-	for x := x1; x < x2; x++ {
-		y := y1 + dy*(x-x1)/dx
-
-		pixels[ci] = scene.NewPixel(int(x), int(y), color)
-		ci++
+	if math.Abs(y1-y0) < math.Abs(x1-x0) {
+		if x0 > x1 {
+			plotLineLow(x1, y1, x0, y0, pixels, color)
+		} else {
+			plotLineLow(x0, y0, x1, y1, pixels, color)
+		}
+	} else {
+		if y0 > y1 {
+			plotLineHigh(x1, y1, x0, y0, pixels, color)
+		} else {
+			plotLineHigh(x0, y0, x1, y1, pixels, color)
+		}
 	}
 
+	log.Println(pixels)
+
 	return pixels
+}
+
+func plotLineLow(x0 float64, y0 float64, x1 float64, y1 float64, pixels []scene.Pixel, color scene.Color) {
+	dx := x1 - x0
+	dy := y1 - y0
+	yi := 1.0
+	if dy < 0 {
+		yi = -1
+		dy = -dy
+	}
+	D := 2*dy - dx
+	y := y0
+
+	for x := x0; x < x1; x++ {
+		pixels = append(pixels, scene.NewPixel(int(x), int(y), color))
+		log.Println(x, y)
+		if D > 0 {
+			y = y + yi
+			D = D - 2*dx
+		}
+		D = D + 2*dy
+	}
+}
+
+func plotLineHigh(x0 float64, y0 float64, x1 float64, y1 float64, pixels []scene.Pixel, color scene.Color) {
+	dx := x1 - x0
+	dy := y1 - y0
+	xi := 1.0
+	if dx < 0 {
+		xi = -1
+		dx = -dx
+	}
+	D := 2*dx - dy
+	x := x0
+
+	for y := y0; y < y1; y++ {
+		pixels = append(pixels, scene.NewPixel(int(x), int(y), color))
+		log.Println(x, y)
+		if D > 0 {
+			x = x + xi
+			D = D - 2*dy
+		}
+		D = D + 2*dx
+	}
 }
