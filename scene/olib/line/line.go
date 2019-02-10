@@ -58,15 +58,15 @@ func initPixels(x0 float64, y0 float64, x1 float64, y1 float64, color scene.Colo
 
 	if math.Abs(y1-y0) < math.Abs(x1-x0) {
 		if x0 > x1 {
-			plotLineLow(x1, y1, x0, y0, pixels, color)
+			pixels = append(pixels, plotLineLow(x1, y1, x0, y0, color)...)
 		} else {
-			plotLineLow(x0, y0, x1, y1, pixels, color)
+			pixels = append(pixels, plotLineLow(x0, y0, x1, y1, color)...)
 		}
 	} else {
 		if y0 > y1 {
-			plotLineHigh(x1, y1, x0, y0, pixels, color)
+			pixels = append(pixels, plotLineHigh(x1, y1, x0, y0, color)...)
 		} else {
-			plotLineHigh(x0, y0, x1, y1, pixels, color)
+			pixels = append(pixels, plotLineHigh(x0, y0, x1, y1, color)...)
 		}
 	}
 
@@ -75,7 +75,9 @@ func initPixels(x0 float64, y0 float64, x1 float64, y1 float64, color scene.Colo
 	return pixels
 }
 
-func plotLineLow(x0 float64, y0 float64, x1 float64, y1 float64, pixels []scene.Pixel, color scene.Color) {
+func plotLineLow(x0 float64, y0 float64, x1 float64, y1 float64, color scene.Color) []scene.Pixel {
+	var pixels []scene.Pixel
+
 	dx := x1 - x0
 	dy := y1 - y0
 	yi := 1.0
@@ -95,9 +97,13 @@ func plotLineLow(x0 float64, y0 float64, x1 float64, y1 float64, pixels []scene.
 		}
 		D = D + 2*dy
 	}
+
+	return pixels
 }
 
-func plotLineHigh(x0 float64, y0 float64, x1 float64, y1 float64, pixels []scene.Pixel, color scene.Color) {
+func plotLineHigh(x0 float64, y0 float64, x1 float64, y1 float64, color scene.Color) []scene.Pixel {
+	var pixels []scene.Pixel
+
 	dx := x1 - x0
 	dy := y1 - y0
 	xi := 1.0
@@ -117,4 +123,6 @@ func plotLineHigh(x0 float64, y0 float64, x1 float64, y1 float64, pixels []scene
 		}
 		D = D + 2*dx
 	}
+
+	return pixels
 }
