@@ -32,3 +32,7 @@ func initPixels(color scene.Color, width int, height int) []scene.Pixel {
 func (c *Canvas) GetPixels() []scene.Pixel {
 	return c.canvasPixels
 }
+
+func (c *Canvas) Draw(x int, y int, color scene.Color) {
+	c.canvasPixels = append(c.canvasPixels, scene.NewPixel(x, y, color))
+}

@@ -47,6 +47,7 @@ func (c *Cursor) Listener(event sdl.Event) {
 	case *sdl.MouseMotionEvent:
 		c.MoveTo(float64(e.X), float64(e.Y))
 	case *sdl.MouseButtonEvent:
+		log.Println(e.Button)
 		log.Println("button pressed at[", e.X, e.Y, "]")
 	}
 }
