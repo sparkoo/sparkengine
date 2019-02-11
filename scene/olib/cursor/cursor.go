@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	color        = scene.Color{127, 127, 127, 127}
+	color        = scene.Color{100, 100, 100, 255}
 	cursorPixels []scene.Pixel
 )
 
