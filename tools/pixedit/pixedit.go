@@ -27,8 +27,10 @@ func main() {
 func initScene() *scene.Scene {
 	s := scene.NewScene(scene.NoopTick)
 
-	canvasFrame := frame.NewFrame(5, 5, 64, 64, scene.Color{127, 127, 127, 255})
-	canvasControlLine := line.NewLine(100, 0, conf.SWIDTH, conf.SHEIGHT, scene.Color{100, 200, 20, 255})
+	canvasSize := conf.SHEIGHT - 10
+
+	canvasFrame := frame.NewFrame(5, 5, canvasSize, canvasSize, scene.Color{127, 127, 127, 255})
+	canvasControlLine := line.NewLine(float64(canvasSize + 10), 0, float64(canvasSize + 10), conf.SHEIGHT, scene.Color{100, 200, 20, 255})
 
 	s.AddObjects(canvasFrame, canvasControlLine)
 

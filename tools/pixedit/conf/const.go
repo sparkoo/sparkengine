@@ -1,7 +1,7 @@
 package conf
 
 const (
-	SWIDTH  = 640
-	SHEIGHT = 480
+	SWIDTH  = 1920 / 2
+	SHEIGHT = 1080 / 2
 	FPS     = 30
 )
