@@ -30,7 +30,7 @@ func initPixels(xsize int, ysize int, color scene.Color) []scene.Pixel {
 		pixels[pi] = scene.NewPixel(xi, 0, color)
 		pi++
 
-		pixels[pi] = scene.NewPixel(xi, ysize, color)
+		pixels[pi] = scene.NewPixel(xi, ysize-1, color)
 		pi++
 	}
 
@@ -39,7 +39,7 @@ func initPixels(xsize int, ysize int, color scene.Color) []scene.Pixel {
 		pixels[pi] = scene.NewPixel(0, yi, color)
 		pi++
 
-		pixels[pi] = scene.NewPixel(xsize, yi, color)
+		pixels[pi] = scene.NewPixel(xsize-1, yi, color)
 		pi++
 	}
 
