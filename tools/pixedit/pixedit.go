@@ -3,12 +3,13 @@ package main
 import (
 	"github.com/sparkoo/sparkengine/core"
 	"github.com/sparkoo/sparkengine/scene"
+	"github.com/sparkoo/sparkengine/scene/olib/button"
 	canvas2 "github.com/sparkoo/sparkengine/scene/olib/canvas"
 	cursor2 "github.com/sparkoo/sparkengine/scene/olib/cursor"
-	"github.com/sparkoo/sparkengine/scene/olib/frame"
-	"github.com/sparkoo/sparkengine/scene/olib/line"
+	"github.com/sparkoo/sparkengine/scene/olib/shape"
 	"github.com/sparkoo/sparkengine/tools/pixedit/conf"
 	"github.com/veandco/go-sdl2/sdl"
+	"log"
 )
 
 var (
@@ -31,9 +32,9 @@ func main() {
 func initScene() *scene.Scene {
 	s := scene.NewScene(scene.NoopTick)
 
-	canvasFrame := frame.NewFrame(5, 5, conf.CANVAS_SIZE, conf.CANVAS_SIZE, scene.Color{100, 100, 100, 255})
+	canvasFrame := shape.NewRect(5, 5, conf.CANVAS_SIZE, conf.CANVAS_SIZE, scene.Color{100, 100, 100, 255})
 
-	canvasControlLine := line.NewLine(float64(conf.CANVAS_SIZE+10), 0, float64(conf.CANVAS_SIZE+10), conf.SHEIGHT, scene.Color{127, 127, 127, 255})
+	canvasControlLine := shape.NewLine(float64(conf.CANVAS_SIZE+10), 0, float64(conf.CANVAS_SIZE+10), conf.SHEIGHT, scene.Color{127, 127, 127, 255})
 
 	canvas = canvas2.NewCanvas(10, 10, conf.CANVAS_SIZE-10, conf.CANVAS_SIZE-10, scene.Color{200, 200, 200, 255})
 
@@ -41,7 +42,11 @@ func initScene() *scene.Scene {
 	s.AddEventListener(cursor.Listener)
 	s.AddEventListener(drawListener)
 
-	s.AddObjects(canvasFrame, canvasControlLine, canvas, cursor)
+	testButton := button.NewButton(conf.SWIDTH * .8, conf.SHEIGHT * .9, 50, 20, func() {
+		log.Println("test button pressed")
+	})
+
+	s.AddObjects(canvasFrame, canvasControlLine, canvas, testButton, cursor)
 
 	return s
 }
