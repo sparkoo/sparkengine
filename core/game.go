@@ -49,8 +49,11 @@ func (g *Game) Quit() {
 	g.frameTicker.Stop()
 }
 
-func (g *Game) SwitchScene(s *scene.Scene) {
+func (g *Game) SwitchScene(s *scene.Scene, clearTickCounter bool) {
 	g.stop()
+	if clearTickCounter {
+		s.ClearTickCounter()
+	}
 	g.currentScene = s
 	g.run()
 }

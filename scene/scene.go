@@ -55,5 +55,9 @@ func (s *Scene) HandleEvents(event sdl.Event) {
 	}
 }
 
+func (s *Scene) ClearTickCounter() {
+	s.sceneTickCounter = 0
+}
+
 func NoopTick(_ int64, _ int64) {
 }
