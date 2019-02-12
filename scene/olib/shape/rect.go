@@ -1,24 +1,24 @@
-package frame
+package shape
 
 import "github.com/sparkoo/sparkengine/scene"
 
-type Frame struct {
+type Rect struct {
 	*scene.Base
 	color  scene.Color
 	pixels []scene.Pixel
 }
 
-func (f *Frame) GetPixels() []scene.Pixel {
+func (f *Rect) GetPixels() []scene.Pixel {
 	return f.pixels
 }
 
-func NewFrame(xpos float64, ypos float64, xsize int, ysize int, color scene.Color) *Frame {
-	return &Frame{
+func NewRect(xpos float64, ypos float64, xsize int, ysize int, color scene.Color) *Rect {
+	return &Rect{
 		Base: scene.NewBase(xpos, ypos, xsize, ysize), color: color,
-		pixels: initPixels(xsize, ysize, color)}
+		pixels: initRectPixels(xsize, ysize, color)}
 }
 
-func initPixels(xsize int, ysize int, color scene.Color) []scene.Pixel {
+func initRectPixels(xsize int, ysize int, color scene.Color) []scene.Pixel {
 	// top and bottom lines -> xsize * 2
 	// left and right lines -> ysize * 2
 	// 4 corners are in both top/bottom and left/right lines -> -4

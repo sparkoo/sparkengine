@@ -1,4 +1,4 @@
-package line
+package shape
 
 import (
 	"github.com/sparkoo/sparkengine/scene"
@@ -34,10 +34,10 @@ func NewLine(x1 float64, y1 float64, x2 float64, y2 float64, color scene.Color) 
 		x2:     x2,
 		y2:     y2,
 		color:  color,
-		pixels: initPixels(0, 0, x2-x1, y2-y1, color)}
+		pixels: initLinePixels(0, 0, x2-x1, y2-y1, color)}
 }
 
-func initPixels(x0 float64, y0 float64, x1 float64, y1 float64, color scene.Color) []scene.Pixel {
+func initLinePixels(x0 float64, y0 float64, x1 float64, y1 float64, color scene.Color) []scene.Pixel {
 	pixels := make([]scene.Pixel, 0)
 
 	if math.Abs(y1-y0) < math.Abs(x1-x0) {
