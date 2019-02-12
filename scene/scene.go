@@ -6,15 +6,18 @@ import (
 
 type Scene struct {
 	objects        []Object
-	tickAction     func()
+	tickAction     func(gameTickCounter int64, sceneTickCounter int64)
 	eventListeners []func(sdl.Event)
+
+	sceneTickCounter int64
 }
 
-func NewScene(tickAction func()) *Scene {
+func NewScene(tickAction func(gameTickCounter int64, sceneTickCounter int64)) *Scene {
 	return &Scene{
-		objects:        make([]Object, 0),
-		tickAction:     tickAction,
-		eventListeners: make([]func(event sdl.Event), 0)}
+		objects:          make([]Object, 0),
+		tickAction:       tickAction,
+		eventListeners:   make([]func(event sdl.Event), 0),
+		sceneTickCounter: 0}
 }
 
 func (*Scene) Start() {
@@ -37,8 +40,9 @@ func (s *Scene) GetObjects() []Object {
 	return s.objects
 }
 
-func (s *Scene) Tick() {
-	s.tickAction()
+func (s *Scene) Tick(gameTickCounter int64) {
+	s.tickAction(gameTickCounter, s.sceneTickCounter)
+	s.sceneTickCounter++
 }
 
 func (s *Scene) AddEventListener(action func(sdl.Event)) {
@@ -51,6 +55,5 @@ func (s *Scene) HandleEvents(event sdl.Event) {
 	}
 }
 
-func NoopTick() {
-
+func NoopTick(_ int64, _ int64) {
 }

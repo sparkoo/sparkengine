@@ -14,12 +14,14 @@ type Game struct {
 
 	currentScene *scene.Scene
 
+	gameTickCounter int64
+
 	gameTicker  *time.Ticker
 	frameTicker *time.Ticker
 }
 
 func NewGame(conf *Conf) *Game {
-	return &Game{running: false, conf: conf}
+	return &Game{running: false, conf: conf, gameTickCounter: 0}
 }
 
 func (g *Game) Start(s *scene.Scene) {
@@ -38,7 +40,7 @@ func (g *Game) Start(s *scene.Scene) {
 		handleEvents(g)
 	}
 
-	time.Sleep(1 * time.Second)
+	//time.Sleep(1 * time.Second)
 }
 
 func (g *Game) Quit() {
@@ -71,7 +73,8 @@ func gameTick(g *Game, conf *Conf) {
 	fps := fpscounter.NewFpsCounter("ticks", 1000)
 	for range g.gameTicker.C {
 		if g.running {
-			g.currentScene.Tick()
+			g.currentScene.Tick(g.gameTickCounter)
+			g.gameTickCounter++
 			fps.Tick()
 		}
 	}
