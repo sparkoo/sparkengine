@@ -2,6 +2,7 @@ package core
 
 import (
 	"github.com/sparkoo/sparkengine/core/scene"
+	"github.com/veandco/go-sdl2/mix"
 	"github.com/veandco/go-sdl2/sdl"
 	"log"
 	"runtime"
@@ -47,6 +48,7 @@ func (r *sdlRenderer) destroy() {
 	r.window.Destroy()
 	r.renderer.Destroy()
 	r.texture.Destroy()
+	mix.CloseAudio()
 	sdl.Quit()
 	log.Println("done")
 }
@@ -80,6 +82,11 @@ func (r *sdlRenderer) renderFrame(objects []scene.Object) {
 func initSDL() {
 	runtime.LockOSThread()
 	if err := sdl.Init(sdl.INIT_EVERYTHING); err != nil {
+		panic(err)
+	}
+
+	if err := mix.OpenAudio(44100, mix.DEFAULT_FORMAT, 2, 4096); err != nil {
+		log.Println(err)
 		panic(err)
 	}
 }
