@@ -111,6 +111,7 @@ func initRenderer(window *sdl.Window) *sdl.Renderer {
 func initTexture(renderer *sdl.Renderer, conf *Conf) *sdl.Texture {
 	texture, err := renderer.CreateTexture(sdl.PIXELFORMAT_ABGR8888, sdl.TEXTUREACCESS_STREAMING,
 		conf.screenWidth, conf.screenHeight)
+	texture.SetBlendMode(sdl.BLENDMODE_BLEND)
 	if err != nil {
 		panic(err)
 	}

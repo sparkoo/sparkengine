@@ -21,15 +21,17 @@ func LoadImage(imagePath string, x int, y int, width int, height int) []scene.Pi
 
 func loadImage(img image.Image, xStart int, yStart int, width int, height int) []scene.Pixel {
 	xMax, yMax := xStart+width, yStart+height
-	pI := 0
-	pixels := make([]scene.Pixel, width*height)
+	pixels := make([]scene.Pixel, 0)
 
 	// [xi;yi] are coordinates of result pixels
 	// [x;y] are coordinates in original image
 	for x, xi := xStart, 0; x < xMax; x, xi = x+1, xi+1 {
 		for y, yi := yStart, 0; y < yMax; y, yi = y+1, yi+1 {
-			pixels[pI] = scene.NewPixel(xi, yi, getRGBA(img.At(x, y)))
-			pI++
+			colorBytes := getRGBA(img.At(x, y))
+			// include just visible pixels (alpha > 0)
+			if colorBytes[3] > 0 {
+				pixels = append(pixels, scene.NewPixel(xi, yi, colorBytes))
+			}
 		}
 	}
 
