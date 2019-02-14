@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/sparkoo/sparkengine/scene"
-	"github.com/sparkoo/sparkengine/scene/image"
+	"github.com/sparkoo/sparkengine/core/scene"
+	"github.com/sparkoo/sparkengine/core/scene/image"
 	"log"
 	"os"
 	"path/filepath"

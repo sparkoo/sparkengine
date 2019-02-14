@@ -1,7 +1,7 @@
 package image
 
 import (
-	"github.com/sparkoo/sparkengine/scene"
+	"github.com/sparkoo/sparkengine/core/scene"
 	"image"
 	"image/color"
 	"image/png"

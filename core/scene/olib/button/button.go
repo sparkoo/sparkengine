@@ -1,8 +1,8 @@
 package button
 
 import (
-	"github.com/sparkoo/sparkengine/scene"
-	"github.com/sparkoo/sparkengine/scene/olib/shape"
+	"github.com/sparkoo/sparkengine/core/scene"
+	"github.com/sparkoo/sparkengine/core/scene/olib/shape"
 )
 
 type Button struct {

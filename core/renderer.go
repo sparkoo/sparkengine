@@ -1,7 +1,7 @@
 package core
 
 import (
-	"github.com/sparkoo/sparkengine/scene"
+	"github.com/sparkoo/sparkengine/core/scene"
 	"github.com/veandco/go-sdl2/sdl"
 	"log"
 	"runtime"

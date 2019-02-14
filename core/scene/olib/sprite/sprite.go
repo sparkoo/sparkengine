@@ -1,6 +1,8 @@
 package sprite
 
-import "github.com/sparkoo/sparkengine/scene"
+import (
+	"github.com/sparkoo/sparkengine/core/scene"
+)
 
 type Sprite struct {
 	*scene.Base

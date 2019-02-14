@@ -1,7 +1,7 @@
 package shape
 
 import (
-	"github.com/sparkoo/sparkengine/scene"
+	"github.com/sparkoo/sparkengine/core/scene"
 	"math"
 )
 

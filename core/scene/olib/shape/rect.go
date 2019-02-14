@@ -1,6 +1,6 @@
 package shape
 
-import "github.com/sparkoo/sparkengine/scene"
+import "github.com/sparkoo/sparkengine/core/scene"
 
 type Rect struct {
 	*scene.Base

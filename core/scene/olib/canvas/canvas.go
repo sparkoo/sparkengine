@@ -1,6 +1,6 @@
 package canvas
 
-import "github.com/sparkoo/sparkengine/scene"
+import "github.com/sparkoo/sparkengine/core/scene"
 
 type Canvas struct {
 	*scene.Base
