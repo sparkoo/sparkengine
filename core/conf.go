@@ -22,3 +22,7 @@ func NewConf30T320W() *Conf {
 func NewConf30T640W() *Conf {
 	return NewConf(30, 60, 640, 480)
 }
+
+func NewConf30T960W() *Conf{
+	return NewConf(30, 60, 960, 540)
+}
