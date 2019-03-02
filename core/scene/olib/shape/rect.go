@@ -14,7 +14,8 @@ func (f *Rect) GetPixels() []scene.Pixel {
 
 func NewRect(xpos float64, ypos float64, xsize int, ysize int, color scene.Color) *Rect {
 	return &Rect{
-		Base: scene.NewBase(xpos, ypos, xsize, ysize), color: color,
+		Base: scene.NewBase(xpos, ypos, xsize, ysize),
+		color: color,
 		pixels: initRectPixels(xsize, ysize, color)}
 }
 
