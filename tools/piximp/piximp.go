@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/sparkoo/sparkengine/core/scene"
 	"github.com/sparkoo/sparkengine/core/scene/image"
-	"log"
 	"os"
 	"path/filepath"
 )
@@ -12,7 +11,7 @@ import (
 func main() {
 	srcImage, dstFile := handleArgs(os.Args)
 
-	log.Println("reading image ...")
+	fmt.Println("reading image ...")
 
 	resultFile, err := os.Create(dstFile)
 	panicErr(err)
@@ -20,13 +19,14 @@ func main() {
 
 	writePixels(resultFile, image.LoadFullImage(srcImage))
 
-	log.Println("done")
-	log.Println("function saved at ", dstFile)
+	fmt.Println("done")
+	fmt.Println("function saved at ", dstFile)
 }
 
 func handleArgs(args []string) (srcImage string, dstFile string) {
 	if len(os.Args) != 3 {
-		log.Fatal("expected 2 args. piximp [source_image] [dest_file]")
+		fmt.Println("expected 2 args. piximp [source_image] [dest_file]")
+		os.Exit(1)
 	}
 
 	srcImage, err := filepath.Abs(args[1])
