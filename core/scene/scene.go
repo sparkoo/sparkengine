@@ -1,13 +1,14 @@
 package scene
 
 import (
+	"github.com/sparkoo/sparkengine/core/event"
 	"github.com/veandco/go-sdl2/sdl"
 )
 
 type Scene struct {
 	objects        []Object
 	tickAction     func(gameTickCounter int64, sceneTickCounter int64)
-	eventListeners []func(sdl.Event)
+	eventListeners []func(event.Event)
 
 	sceneTickCounter int64
 }
@@ -16,7 +17,7 @@ func NewScene(tickAction func(gameTickCounter int64, sceneTickCounter int64)) *S
 	return &Scene{
 		objects:          make([]Object, 0),
 		tickAction:       tickAction,
-		eventListeners:   make([]func(event sdl.Event), 0),
+		eventListeners:   make([]func(event.Event), 0),
 		sceneTickCounter: 0}
 }
 
@@ -45,7 +46,7 @@ func (s *Scene) Tick(gameTickCounter int64) {
 	s.sceneTickCounter++
 }
 
-func (s *Scene) AddEventListener(action func(sdl.Event)) {
+func (s *Scene) AddEventListener(action func(event.Event)) {
 	s.eventListeners = append(s.eventListeners, action)
 }
 
