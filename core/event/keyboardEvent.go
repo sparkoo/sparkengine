@@ -15,11 +15,6 @@ const (
 	RELEASED
 )
 
-type Key struct {
-	keycode uint32
-	mod     uint16
-}
-
 type KeyboardEvent struct {
 	CommonEvent
 	eventType EventType
@@ -37,4 +32,17 @@ func (e *KeyboardEvent) GetState() KeypressState {
 
 func (e *KeyboardEvent) GetKey() Key {
 	return e.key
+}
+
+type Key struct {
+	keycode uint32
+	mod     uint16
+}
+
+func (k *Key) GetKeycode() uint32 {
+	return k.keycode
+}
+
+func (k *Key) GetMod() uint16 {
+	return k.mod
 }
