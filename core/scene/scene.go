@@ -3,6 +3,7 @@ package scene
 import (
 	"github.com/sparkoo/sparkengine/core/event"
 	"github.com/veandco/go-sdl2/sdl"
+	"log"
 )
 
 type Scene struct {
@@ -52,7 +53,17 @@ func (s *Scene) AddEventListener(action func(event.Event)) {
 
 func (s *Scene) HandleEvents(event sdl.Event) {
 	for _, e := range s.eventListeners {
-		e(event)
+		e(createEvent(event))
+	}
+}
+
+func createEvent(e sdl.Event) event.Event {
+	switch t := e.(type) {
+	case *sdl.KeyboardEvent:
+		return event.NewKeyboardEvent(t)
+	default:
+		log.Println("Unknown event", e)
+		return nil
 	}
 }
 

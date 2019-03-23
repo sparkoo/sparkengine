@@ -1,18 +1,20 @@
 package event
 
+import "github.com/veandco/go-sdl2/sdl"
+
 const (
-	KEYDOWN       EventType = iota // key pressed
-	KEYUP                          // key released
-	TEXTEDITING                    // keyboard text editing (composition)
-	TEXTINPUT                      // keyboard text input
-	KEYMAPCHANGED                  // keymap changed due to a system event such as an input language or keyboard layout change (>= SDL 2.0.4)
+	KEYDOWN       = sdl.KEYDOWN       // key pressed
+	KEYUP         = sdl.KEYUP         // key released
+	TEXTEDITING   = sdl.TEXTEDITING   // keyboard text editing (composition)
+	TEXTINPUT     = sdl.TEXTINPUT     // keyboard text input
+	KEYMAPCHANGED = sdl.KEYMAPCHANGED // keymap changed due to a system event such as an input language or keyboard layout change (>= SDL 2.0.4)
 )
 
-type KeypressState uint
+type KeypressState uint8
 
 const (
-	PRESSED KeypressState = iota
-	RELEASED
+	PRESSED  = sdl.PRESSED
+	RELEASED = sdl.RELEASED
 )
 
 type KeyboardEvent struct {
@@ -20,6 +22,24 @@ type KeyboardEvent struct {
 	eventType EventType
 	state     KeypressState
 	key       Key
+}
+
+func NewKeyboardEvent(event sdl.Event) Event {
+	if e, ok := event.(*sdl.KeyboardEvent); ok {
+		return &KeyboardEvent{
+			CommonEvent: CommonEvent{
+				timestamp: e.GetTimestamp(),
+			},
+			eventType: EventType(e.Type),
+			state:     KeypressState(e.State),
+			key: Key{
+				keycode: uint32(e.Keysym.Scancode),
+				mod:     e.Keysym.Mod,
+			},
+		}
+	} else {
+		panic("invalid event type")
+	}
 }
 
 func (e *KeyboardEvent) GetType() EventType {
@@ -30,8 +50,8 @@ func (e *KeyboardEvent) GetState() KeypressState {
 	return e.state
 }
 
-func (e *KeyboardEvent) GetKey() Key {
-	return e.key
+func (e *KeyboardEvent) GetKey() *Key {
+	return &e.key
 }
 
 type Key struct {
